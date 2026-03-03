@@ -1,11 +1,14 @@
 import { Link, useParams } from 'react-router-dom';
-import { freefireTeams } from '../../data/freefireData';
+import useFetch from '../../hooks/useFetch';
+import BASE_URL from '../../config/api';
 
 const FreeFireTeamDetails = () => {
   const { teamId } = useParams();
-  const team = freefireTeams.find(t => t.id === teamId);
+  const { data: team, loading, error } = useFetch(`${BASE_URL}/organizers/${teamId}`);
 
-  if (!team) {
+  if (loading) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Loading...</div>;
+
+  if (error || !team) {
     return (
       <div className="container page-anim" style={{ paddingTop: '8rem', textAlign: 'center' }}>
         <h1>Team Not Found</h1>
@@ -16,26 +19,26 @@ const FreeFireTeamDetails = () => {
 
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>
-      <Link to="/freefire/organisers" style={{ marginBottom: '2rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: team.color, fontWeight: '600' }}>
+      <Link to="/freefire/organisers" style={{ marginBottom: '2rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: team.color || 'var(--secondary)', fontWeight: '600' }}>
         <span>&larr;</span> Back to Teams
       </Link>
 
-      <div className="glass-panel" style={{ padding: '3rem', marginBottom: '3rem', borderTop: `4px solid ${team.color}` }}>
+      <div className="glass-panel" style={{ padding: '3rem', marginBottom: '3rem', borderTop: `4px solid ${team.color || 'var(--secondary)'}` }}>
         <h1 style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>{team.name}</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>{team.description}</p>
       </div>
 
       <div className="grid-auto">
-        {team.members.map(member => (
-          <div key={member.id} className="glass-panel" style={{ padding: '0', overflow: 'hidden', position: 'relative' }}>
-            <div style={{ height: '80px', background: `linear-gradient(135deg, ${team.color}22, transparent)` }}></div>
+        {team.members.map((member, idx) => (
+          <div key={member._id || idx} className="glass-panel" style={{ padding: '0', overflow: 'hidden', position: 'relative' }}>
+            <div style={{ height: '80px', background: `linear-gradient(135deg, ${team.color || '#ec4899'}22, transparent)` }}></div>
             <div style={{ padding: '0 2rem 2rem 2rem', marginTop: '-40px' }}>
               <div style={{
                 width: '80px',
                 height: '80px',
                 borderRadius: '50%',
                 background: '#161b22',
-                border: `3px solid ${team.color}`,
+                border: `3px solid ${team.color || '#ec4899'}`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -47,7 +50,7 @@ const FreeFireTeamDetails = () => {
               </div>
 
               <h3 style={{ textAlign: 'center', marginBottom: '0.5rem', fontSize: '1.5rem' }}>{member.name}</h3>
-              <p style={{ textAlign: 'center', color: team.color, fontWeight: '600', marginBottom: '2rem' }}>{member.role}</p>
+              <p style={{ textAlign: 'center', color: team.color || 'var(--secondary)', fontWeight: '600', marginBottom: '2rem' }}>{member.role}</p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                 <InfoRow label="Mobile" value={member.mobile} />

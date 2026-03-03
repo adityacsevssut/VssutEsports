@@ -1,0 +1,83 @@
+.login-selection-page {
+  padding: 80px 0 2rem 0; /* Top padding for fixed header */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.page-subtitle {
+  color: #aaaaaa;
+  margin-bottom: 3rem;
+  font-size: 1.1rem;
+}
+
+.login-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 0 1rem;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.icon-wrapper {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  color: #646cff; /* Vite color for default, change as needed */
+  transition: color 0.3s ease;
+}
+
+.login-card:hover .icon-wrapper {
+  color: #fff;
+}
+
+.login-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-card p {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* Specific Card Colors (Gradients on hover or icons) */
+.player-card .icon-wrapper { color: #4ade80; }
+.partner-card .icon-wrapper { color: #facc15; }
+.dev-card .icon-wrapper { color: #60a5fa; }
+.admin-card .icon-wrapper { color: #f87171; }
+
+.player-card:hover { border-color: #4ade80; box-shadow: 0 0 20px rgba(74, 222, 128, 0.2); }
+.partner-card:hover { border-color: #facc15; box-shadow: 0 0 20px rgba(250, 204, 21, 0.2); }
+.dev-card:hover { border-color: #60a5fa; box-shadow: 0 0 20px rgba(96, 165, 250, 0.2); }
+.admin-card:hover { border-color: #f87171; box-shadow: 0 0 20px rgba(248, 113, 113, 0.2); }

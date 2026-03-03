@@ -1,0 +1,636 @@
+/* ── Base container ───────────────────────────────────────── */
+.admin-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* ── Admin header ─────────────────────────────────────────── */
+.admin-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* ── Game selector pill bar ──────────────────────────────── */
+.admin-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  align-items: center;
+}
+
+.game-selector {
+  display: flex;
+  background: #161b22;
+  padding: 0.5rem;
+  border-radius: 50px;
+  border: 1px solid rgba(255,255,255,0.1);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.game-btn {
+  padding: 0.6rem 1.5rem;
+  border-radius: 40px;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.game-btn.active {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(139, 92, 246, 0.4);
+}
+
+/* ── Tab selector ─────────────────────────────────────────── */
+.tab-selector {
+  display: flex;
+  gap: 2rem;
+}
+
+.tab-btn {
+  background: none;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.tab-btn.title-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  border-bottom: 2px solid var(--accent);
+}
+
+/* ── Content Wrapper (Centers heading + forms together) ──── */
+.admin-content {
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ── Content header (title + Add New btn) ────────────────── */
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.content-header h2 {
+  font-size: 1.1rem;
+  color: var(--text-main);
+  text-transform: capitalize;
+  margin: 0;
+}
+
+/* ── Data list items ──────────────────────────────────────── */
+.data-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  transition: transform 0.2s;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.data-item:hover {
+  transform: translateX(5px);
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-info h3 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-actions {
+  flex-shrink: 0;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.tags {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.status-tag {
+  background: rgba(255,255,255,0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.78rem;
+}
+.status-tag.upcoming          { color: #facc15; }
+.status-tag.registration-open { color: #4ade80; }
+.status-tag.live              { color: #ef4444; }
+
+.btn-text {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.btn-text:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-text-danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.btn-text-danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.no-data {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 3rem 0;
+  font-size: 0.95rem;
+}
+
+/* ── Forms ────────────────────────────────────────────────── */
+.form-container {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.form-container h3 {
+  font-size: 1.05rem;
+  margin-bottom: 1.4rem;
+  color: var(--text-main);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 7px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+/* Grid layouts */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+
+/* Form actions */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--text-muted);
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-submit {
+  background: var(--primary);
+  color: white;
+  padding: 0.75rem 1.75rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: opacity 0.2s;
+}
+
+.btn-submit:hover { opacity: 0.85; }
+
+/* Rule input */
+.rule-input-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rule-input-group input {
+  flex: 1;
+}
+
+.rule-list {
+  margin-top: 0.75rem;
+  background: #0d1117;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  list-style: none;
+}
+
+.rule-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #30363d;
+  padding-bottom: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.remove-rule {
+  cursor: pointer;
+  color: #ef4444;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+/* Color picker */
+.color-picker {
+  height: 40px;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 2px;
+}
+
+/* Member cards */
+.member-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+}
+
+.member-card-header {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--accent);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: 0.5rem;
+  font-size: 0.88rem;
+}
+
+.member-item {
+  background: #0d1117;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.member-details {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.flex-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  background: var(--secondary);
+  color: white;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+/* ── Game selection landing page ──────────────────────────── */
+.game-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* NOTE: .game-card in this file refers to the admin-panel game select cards
+   (different from Home.css .game-card which has bg images) */
+.admin-container .game-card {
+  background: rgba(22, 27, 34, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  min-height: 180px;
+  text-align: center;
+}
+
+.admin-container .game-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.5);
+  background: rgba(22, 27, 34, 0.8);
+}
+
+.game-card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.admin-container .game-card:hover .game-card-icon {
+  transform: scale(1.08);
+}
+
+.admin-container .game-card h2 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(135deg, #fff 0%, #ccc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.admin-container .game-card p {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin: 0;
+}
+
+/* ── Back button ──────────────────────────────────────────── */
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 1rem;
+  padding: 0;
+  transition: color 0.3s, transform 0.2s;
+}
+
+.back-btn:hover {
+  color: var(--primary);
+  transform: translateX(-4px);
+}
+
+/* ── User Management table wrapper ───────────────────────── */
+.users-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--text-main);
+  min-width: 520px;
+}
+
+.users-table th,
+.users-table td {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.users-table thead tr {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.users-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.15s;
+}
+
+.users-table tbody tr:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════════════════════ */
+
+/* ── Tablet (≤ 768px) ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 0 1rem;
+  }
+
+  /* Grids collapse early */
+  .grid-2 { grid-template-columns: 1fr; gap: 0; }
+  .grid-3 { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+
+  .form-container {
+    padding: 1.25rem 1rem;
+  }
+
+  .game-selector {
+    border-radius: 16px;
+  }
+
+  .game-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.88rem;
+  }
+
+  .tab-selector {
+    gap: 1.25rem;
+    justify-content: center;
+  }
+
+  .tab-btn {
+    font-size: 1rem;
+  }
+
+  .game-cards-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .data-item {
+    padding: 0.85rem 1rem;
+  }
+
+  .member-card {
+    padding: 0.85rem 0.75rem;
+  }
+
+  .content-header h2 {
+    font-size: 1rem;
+  }
+
+  .form-actions {
+    justify-content: stretch;
+  }
+
+  .form-actions .btn-cancel,
+  .form-actions .btn-submit {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* ── Small mobile (≤ 480px) ──────────────────────────────── */
+@media (max-width: 480px) {
+  .grid-3 { grid-template-columns: 1fr; gap: 0; }
+
+  .game-cards-container {
+    grid-template-columns: 1fr;
+  }
+
+  .tab-btn {
+    font-size: 0.94rem;
+  }
+
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .content-header .btn {
+    width: 100% !important;
+  }
+
+  .data-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .item-actions {
+    align-self: flex-end;
+  }
+
+  .rule-input-group {
+    flex-direction: column;
+  }
+
+  .rule-input-group .btn-small {
+    width: 100%;
+    padding: 0.6rem;
+    text-align: center;
+  }
+
+  .form-container h3 {
+    font-size: 0.95rem;
+  }
+}
+
+/* ── Extra small (≤ 360px) ───────────────────────────────── */
+@media (max-width: 360px) {
+  .admin-container {
+    padding: 0 0.75rem;
+  }
+
+  .form-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .game-btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.82rem;
+  }
+}

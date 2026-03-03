@@ -1,0 +1,52 @@
+/* Mobile Bottom Nav — visible only on mobile */
+.mobile-bottom-nav {
+  display: none; /* hidden on desktop */
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 990;
+    background: #161b22;
+    border-top: 1px solid #30363d;
+    height: 60px;
+    align-items: stretch;
+  }
+
+  .mbn-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: #8b949e;
+    text-decoration: none;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+    padding: 6px 0;
+  }
+
+  .mbn-item:hover {
+    color: var(--primary, #8b5cf6);
+  }
+
+  .mbn-active {
+    color: var(--primary, #8b5cf6) !important;
+  }
+
+  .mbn-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .mbn-label {
+    line-height: 1;
+  }
+}

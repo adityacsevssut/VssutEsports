@@ -1,0 +1,651 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.form-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.form-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.form-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.form-header {
+  position: sticky;
+  top: 0;
+  background: rgba(22, 27, 34, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem 2.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.form-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 2.2rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.close-btn:hover {
+  color: var(--primary);
+  transform: rotate(90deg) scale(1.1);
+}
+
+.registration-form {
+  padding: 2.5rem;
+}
+
+.section-title {
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-title::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+/* TournamentForm wrapper — desktop padding, overridden on mobile */
+.tournament-form-wrap {
+  padding: 2.5rem;
+}
+
+
+@media (max-width: 768px) {
+  .inputs-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Panel / form padding */
+  .glass-panel {
+    padding: 1rem !important;
+  }
+
+  .registration-form {
+    padding: 1rem;
+  }
+
+  .form-header {
+    padding: 0.875rem 1rem;
+  }
+
+  .form-header h2 {
+    font-size: 1rem;
+  }
+
+  .section-title {
+    font-size: 0.88rem;
+    letter-spacing: 0.5px;
+    word-break: break-word;
+  }
+
+  .payment-section {
+    padding-top: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  /* Input sizing on mobile */
+  .fancy-input {
+    font-size: 0.9rem;
+    padding: 0.75rem 0.875rem;
+  }
+
+  .input-label {
+    font-size: 0.85rem;
+    left: 0.875rem;
+  }
+
+  /* input-group gets top padding so the always-visible label has space */
+  .input-group {
+    min-width: 0;
+    padding-top: 1.5rem;
+  }
+
+  /* On mobile: labels are always visible above the input (not floating) */
+  .input-label {
+    top: 0.15rem !important;
+    left: 0.2rem !important;
+    transform: none !important;
+    font-size: 0.75rem !important;
+    color: var(--text-muted, #8b949e) !important;
+    font-weight: 600 !important;
+    background: transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 0.4rem);
+  }
+
+  /* Highlight label color when input is focused */
+  .fancy-input:focus ~ .input-label {
+    color: var(--theme-color, var(--primary)) !important;
+  }
+
+  /* Inputs sit flush - no floating needed */
+  .fancy-input:focus ~ .input-label,
+  .fancy-input:not(:placeholder-shown) ~ .input-label {
+    top: 0.15rem !important;
+    transform: none !important;
+    font-size: 0.75rem !important;
+    left: 0.2rem !important;
+  }
+
+  /* Modal overlay */
+  .modal-overlay {
+    padding: 0.5rem;
+    align-items: flex-end;
+  }
+
+  .form-container {
+    max-height: 96vh;
+    border-radius: 12px 12px 0 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .glass-panel {
+    padding: 0.75rem !important;
+  }
+
+  .section-title {
+    font-size: 0.8rem;
+  }
+
+  .fancy-input {
+    font-size: 0.85rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .input-label {
+    font-size: 0.8rem;
+    left: 0.75rem;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* UIverse Premium Input Style */
+.input-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.fancy-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.fancy-input::placeholder {
+  color: transparent;
+}
+
+.input-label {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+  padding: 0;
+}
+
+.fancy-input:focus,
+.fancy-input:not(:placeholder-shown) {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: var(--theme-color, var(--primary));
+  box-shadow: 0 0 15px rgba(var(--theme-color-rgb, 255,255,255), 0.1);
+}
+
+.fancy-input:focus ~ .input-label,
+.fancy-input:not(:placeholder-shown) ~ .input-label {
+  top: -6px;
+  transform: translateY(-100%);
+  font-size: 0.85rem;
+  color: var(--theme-color, var(--primary));
+  font-weight: 600;
+  left: 0.2rem;
+}
+
+.payment-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.file-upload-wrapper {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.02);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.file-upload-wrapper:hover {
+  border-color: var(--theme-color, var(--primary));
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.file-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-icon {
+  font-size: 2rem;
+  color: var(--theme-color, var(--primary));
+  margin-bottom: 0.5rem;
+}
+
+.upload-text {
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* UIverse Submit Button */
+.submit-btn {
+  padding: 0.8rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: all 0.6s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(var(--theme-color-rgb), 0.4);
+}
+
+.submit-btn:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cancel-btn {
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: white;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 2rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─────────────────────────────────────────────
+   PREMIUM PAYMENT CARD
+───────────────────────────────────────────── */
+.payment-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(0,0,0,0.2) 100%);
+  border: 1px solid rgba(var(--theme-rgb, 255,255,255), 0.2);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(var(--theme-rgb, 255,255,255), 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.payment-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at center, rgba(var(--theme-rgb, 255,255,255), 0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Glowing amount ring */
+.payment-amount-ring {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin: 0 auto 1.75rem;
+  background: conic-gradient(
+    from 0deg,
+    rgba(var(--theme-rgb, 255,255,255), 0.9) 0%,
+    rgba(var(--theme-rgb, 255,255,255), 0.1) 60%,
+    rgba(var(--theme-rgb, 255,255,255), 0.9) 100%
+  );
+  padding: 3px;
+  animation: spin-ring 4s linear infinite;
+  box-shadow: 0 0 30px rgba(var(--theme-rgb, 255,255,255), 0.3);
+}
+
+@keyframes spin-ring {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.payment-amount-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #0b0d12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.payment-currency {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--theme-color, #8b5cf6);
+  align-self: flex-start;
+  margin-top: 12px;
+}
+
+.payment-amount-value {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -1px;
+}
+
+.payment-instruction {
+  font-size: 0.92rem;
+  color: var(--text-muted, #94a3b8);
+  margin-bottom: 1.5rem;
+}
+
+/* Payment method badges */
+.payment-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.payment-badge {
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+}
+
+.payment-badge:hover {
+  background: rgba(var(--theme-rgb, 255,255,255), 0.1);
+  border-color: rgba(var(--theme-rgb, 255,255,255), 0.3);
+}
+
+/* CTA Pay Button */
+.razorpay-pay-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000;
+  text-decoration: none;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--theme-rgb, 255,255,255), 1) 0%,
+    rgba(var(--theme-rgb, 255,255,255), 0.7) 100%
+  );
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow:
+    0 4px 20px rgba(var(--theme-rgb, 255,255,255), 0.4),
+    0 0 0 0 rgba(var(--theme-rgb, 255,255,255), 0);
+  letter-spacing: 0.3px;
+}
+
+.razorpay-pay-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  animation: shimmer-btn 2.5s ease-in-out infinite;
+}
+
+@keyframes shimmer-btn {
+  0% { left: -100%; }
+  60%, 100% { left: 100%; }
+}
+
+.razorpay-pay-btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 8px 35px rgba(var(--theme-rgb, 255,255,255), 0.55),
+    0 0 0 4px rgba(var(--theme-rgb, 255,255,255), 0.15);
+}
+
+.razorpay-pay-btn:active {
+  transform: translateY(-1px) scale(1.00);
+}
+
+.pay-btn-icon {
+  font-size: 1.2rem;
+}
+
+.pay-btn-arrow {
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+}
+
+.razorpay-pay-btn:hover .pay-btn-arrow {
+  transform: translateX(4px);
+}
+
+.payment-security-note {
+  margin-top: 1.25rem;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.3px;
+}
+
+/* Payment proof upload zone */
+.payment-proof-zone {
+  margin-top: 2rem;
+  padding: 1.75rem;
+  border-radius: 16px;
+  background: rgba(var(--theme-rgb, 255,255,255), 0.04);
+  border: 1px solid rgba(var(--theme-rgb, 255,255,255), 0.15);
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.proof-zone-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.proof-zone-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.proof-zone-title {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.proof-zone-subtitle {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-muted, #94a3b8);
+  line-height: 1.5;
+}
+

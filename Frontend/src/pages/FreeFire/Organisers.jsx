@@ -1,7 +1,28 @@
-import { Link } from 'react-router-dom';
-import { freefireTeams } from '../../data/freefireData';
+import { Link, useLocation } from 'react-router-dom';
+import useFetch from '../../hooks/useFetch';
+import { useAuth } from '../../context/AuthContext';
+import BASE_URL from '../../config/api';
 
 const FreeFireOrganisers = () => {
+  const { data: teams, loading, error } = useFetch(`${BASE_URL}/organizers?game=freefire`);
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (loading) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Loading...</div>;
+  if (error) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Error loading data</div>;
+
+  if (!user) {
+    return (
+      <div className="container page-anim" style={{ paddingTop: '8rem', textAlign: 'center' }}>
+        <h1 style={{ marginBottom: '1rem' }}>Restricted Access</h1>
+        <p style={{ marginBottom: '2rem', color: 'var(--text-muted)' }}>You must be logged in to view Organisers.</p>
+        <Link to="/login" state={{ from: location }} className="btn btn-primary" style={{ display: 'inline-block', width: 'auto' }}>
+          Login Now
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>
       <Link to="/freefire" style={{ marginBottom: '2rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--secondary)', fontWeight: '600' }}>
@@ -10,14 +31,14 @@ const FreeFireOrganisers = () => {
       <h1 className="title-gradient" style={{ marginBottom: '3rem', fontSize: 'clamp(2rem, 5vw, 3rem)' }}>FreeFire Organising Teams</h1>
 
       <div className="grid-auto">
-        {freefireTeams.map(team => (
-          <div key={team.id} className="glass-panel feature-card" style={{ padding: '1.5rem', borderTop: `4px solid ${team.color || 'var(--secondary)'}` }}>
+        {teams && teams.map(team => (
+          <div key={team._id} className="glass-panel feature-card" style={{ padding: '1.5rem', borderTop: `4px solid ${team.color || 'var(--secondary)'}` }}>
             <div>
               <h2 style={{ fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', marginBottom: '1rem' }}>{team.name}</h2>
               <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '1rem' }}>{team.description}</p>
               <div style={{ marginBottom: '2rem', display: 'flex', gap: '-10px' }}>
                 {team.members.slice(0, 3).map((m, i) => (
-                  <div key={m.id} style={{
+                  <div key={m._id || i} style={{
                     width: '40px', height: '40px', borderRadius: '50%', background: '#30363d', border: '2px solid #161b22', marginLeft: i > 0 ? '-10px' : '0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem'
                   }}>
                     {m.name.charAt(0)}
@@ -27,11 +48,12 @@ const FreeFireOrganisers = () => {
               </div>
             </div>
 
-            <Link to={`/freefire/organisers/${team.id}`} className="btn btn-outline" style={{ width: '100%', textAlign: 'center', borderColor: team.color || 'var(--secondary)', color: team.color || 'var(--secondary)' }}>
+            <Link to={`/freefire/organisers/${team.slug}`} className="btn btn-outline" style={{ width: '100%', textAlign: 'center', borderColor: team.color || 'var(--secondary)', color: team.color || 'var(--secondary)' }}>
               Know About More
             </Link>
           </div>
         ))}
+        {teams && teams.length === 0 && <p>No organizing teams found.</p>}
       </div>
     </div>
   );

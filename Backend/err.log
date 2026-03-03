@@ -1,0 +1,44 @@
+[dotenv@17.2.3] injecting env (6) from .env -- tip: ??????  load multiple .env files with { path: ['.env.local', '.env'] }
+node : D:\webDevlopment\FULL STACK PROJ
+ECTS\VssutEsports\Backend\src\routes\au
+thRoutes.js:42
+At line:1 char:1
++ node server.js 2>&1 | Out-File 
+-Encoding ASCII err.log
++ ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpeci 
+   fied: (D:\webDevlopmen...uthRoutes  
+  .js:42:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCo 
+   mmandError
+ 
+router.get('/players', getAllPlayers);
+                       ^
+
+ReferenceError: getAllPlayers is not 
+defined
+    at Object.<anonymous> 
+(D:\webDevlopment\FULL STACK PROJECTS\V
+ssutEsports\Backend\src\routes\authRout
+es.js:42:24)
+    at Module._compile (node:internal/m
+odules/cjs/loader:1730:14)
+    at Object..js (node:internal/module
+s/cjs/loader:1895:10)
+    at Module.load (node:internal/modul
+es/cjs/loader:1465:32)
+    at Function._load (node:internal/mo
+dules/cjs/loader:1282:12)
+    at TracingChannel.traceSync 
+(node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/mo
+dules/cjs/loader:235:24)
+    at Module.require (node:internal/mo
+dules/cjs/loader:1487:12)
+    at require 
+(node:internal/modules/helpers:135:16)
+    at Object.<anonymous> 
+(D:\webDevlopment\FULL STACK PROJECTS\V
+ssutEsports\Backend\server.js:20:22)
+
+Node.js v22.17.1

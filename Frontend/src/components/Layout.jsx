@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import MobileBottomNav from './MobileBottomNav';
 
 const Layout = () => {
   return (
@@ -10,6 +11,8 @@ const Layout = () => {
         <Outlet />
       </main>
       <Footer />
+      {/* Sticky bottom nav on mobile — rendered outside footer so it overlays above it */}
+      <MobileBottomNav />
     </div>
   );
 };

@@ -115,22 +115,136 @@
 .link-arrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  color: var(--primary, #8b5cf6);
+  gap: 14px;
+  padding: 11px 22px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 0.9rem;
-  transition: gap 0.3s ease;
+  letter-spacing: 2.5px;
+  font-size: 0.75rem;
+  transition: all 0.35s ease;
+  backdrop-filter: blur(6px);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;          /* creates own stacking context */
 }
 
-.game-card:hover .link-arrow {
-  gap: 1rem;
-  color: #fff;
+/* Gradient fill — stays BEHIND the text at z-index: -1 */
+.link-arrow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--card-accent, linear-gradient(135deg, #8b5cf6, #ec4899));
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: -1;                 /* behind text, above card bg */
+  border-radius: inherit;
 }
+
+/* CSS-drawn arrow: horizontal line + chevron tip */
+.link-arrow::after {
+  content: '';
+  flex-shrink: 0;
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  position: relative;
+  transition: width 0.35s ease, transform 0.35s ease;
+  /* Chevron: two angled lines via box-shadow */
+  box-shadow:
+    5px -3.5px 0 0.5px currentColor,
+    5px  3.5px 0 0.5px currentColor;
+}
+
+.link-arrow:hover {
+  border-color: transparent;
+  letter-spacing: 3.5px;
+  box-shadow: 0 0 22px var(--card-glow, rgba(139, 92, 246, 0.45));
+  color: #fff;
+  gap: 18px;
+}
+
+.link-arrow:hover::before {
+  opacity: 1;
+}
+
+/* Arrow extends + slides on hover */
+.link-arrow:hover::after {
+  width: 26px;
+  transform: translateX(5px);
+}
+
+/* ── Per-game accent colors on card hover ────────────────── */
+/* FreeFire (1st) — orange-red */
+.grid-featured .game-card:nth-of-type(1) {
+  --card-accent: linear-gradient(135deg, #ef4444, #f97316);
+  --card-glow: rgba(239, 68, 68, 0.45);
+}
+.grid-featured .game-card:nth-of-type(1):hover {
+  border-color: #ef4444;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(239,68,68,0.25);
+}
+
+/* Valorant (2nd) — cyan-blue */
+.grid-featured .game-card:nth-of-type(2) {
+  --card-accent: linear-gradient(135deg, #22d3ee, #3b82f6);
+  --card-glow: rgba(34, 211, 238, 0.45);
+}
+.grid-featured .game-card:nth-of-type(2):hover {
+  border-color: #22d3ee;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(34,211,238,0.25);
+}
+
+/* BGMI (3rd) — amber-yellow */
+.grid-featured .game-card:nth-of-type(3) {
+  --card-accent: linear-gradient(135deg, #f59e0b, #eab308);
+  --card-glow: rgba(245, 158, 11, 0.45);
+}
+.grid-featured .game-card:nth-of-type(3):hover {
+  border-color: #f59e0b;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(245,158,11,0.25);
+}
+
 
 @media (max-width: 768px) {
   .hero-title {
     font-size: 3rem;
+  }
+}
+
+.game-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 3rem; /* Adjusted gap for better spacing */
+  width: 100%;
+  max-width: 1100px; /* Increased max width to give cards more breathing room */
+  margin: 0 auto;
+}
+
+@media (max-width: 992px) {
+  .game-menu-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+
+.grid-featured {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .grid-featured {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
   }
 }

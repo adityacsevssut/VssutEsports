@@ -1,0 +1,105 @@
+/* ── Extra top padding for taller signup card ────────────── */
+.signup-page {
+  padding-top: 10rem;
+  align-items: flex-start;
+}
+
+/* ── Wider card for signup form ──────────────────────────── */
+.signup-card {
+  max-width: 560px;
+}
+
+/* ── Brand matching the site header ──────────────────────── */
+.signup-brand {
+  gap: 12px;
+  margin-bottom: 1.4rem;
+}
+
+.signup-card .auth-brand-icon {
+  font-size: 2.2rem;
+}
+
+.signup-brand-text {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #fff;
+  line-height: 1;
+  font-family: inherit;
+}
+
+.signup-brand-vssut {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Two-column rows ─────────────────────────────────────── */
+.form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Game chip selector ──────────────────────────────────── */
+.games-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.game-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50px;
+  color: #aaa;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.game-chip:hover {
+  border-color: rgba(100, 108, 255, 0.5);
+  color: #c7d2fe;
+  background: rgba(100, 108, 255, 0.08);
+}
+
+.game-chip.selected {
+  background: rgba(100, 108, 255, 0.18);
+  border-color: #646cff;
+  color: #a5b4fc;
+  box-shadow: 0 0 10px rgba(100, 108, 255, 0.2);
+}
+
+.game-all.selected {
+  background: rgba(250, 204, 21, 0.12);
+  border-color: #facc15;
+  color: #fde68a;
+  box-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
+}
+
+.game-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* ── Responsive: stack form rows on small screens ────────── */
+@media (max-width: 480px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

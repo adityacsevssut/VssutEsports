@@ -1,0 +1,329 @@
+/* ── Brand mark ──────────────────────────────────────────── */
+.auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+  line-height: 1;
+}
+
+.auth-brand-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Brand text — matches the site header style ───────────────── */
+.signup-brand-text {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #fff;
+  line-height: 1;
+}
+
+.signup-brand-vssut {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Subtitle ────────────────────────────────────────────── */
+.auth-subtitle {
+  text-align: center;
+  color: #777;
+  font-size: 0.9rem;
+  margin-top: -0.6rem;
+  margin-bottom: 2rem;
+  letter-spacing: 0.01em;
+}
+
+/* ── Icon-prefixed input wrapper ─────────────────────────── */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper .input-icon {
+  position: absolute;
+  left: 0.9rem;
+  font-size: 1rem;
+  opacity: 0.5;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.input-wrapper input {
+  padding-left: 2.6rem !important;
+  padding-right: 2.8rem;
+}
+
+/* ── Show/hide password toggle ───────────────────────────── */
+.eye-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.55;
+  padding: 0;
+  line-height: 1;
+  transition: opacity 0.2s;
+}
+
+.eye-toggle:hover {
+  opacity: 1;
+}
+
+/* ── Forgot password row ─────────────────────────────────── */
+.forgot-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.forgot-link {
+  color: #888;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: #a5b4fc;
+  text-decoration: underline;
+}
+
+/* ── Button spinner ──────────────────────────────────────── */
+.btn-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Success message (used in signup/forgot) ─────────────── */
+.success-msg {
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  color: #4ade80;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* ── OTP boxes (used in signup & forgot-password) ────────── */
+.otp-boxes {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 1.5rem 0 1.75rem;
+}
+
+.otp-box {
+  width: 48px;
+  height: 56px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #fff;
+  caret-color: #646cff;
+  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+  outline: none;
+}
+
+.otp-box:focus {
+  border-color: #646cff;
+  background: rgba(100, 108, 255, 0.1);
+  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.2);
+}
+
+.otp-hint {
+  text-align: center;
+  color: #aaa;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+}
+
+.otp-hint strong { color: #e2e8f0; }
+
+/* ── Resend row ──────────────────────────────────────────── */
+.resend-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.25rem;
+  font-size: 0.88rem;
+  color: #777;
+  flex-wrap: wrap;
+}
+
+.resend-btn {
+  background: none;
+  border: none;
+  color: #646cff;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.resend-btn:disabled {
+  color: #555;
+  cursor: not-allowed;
+}
+
+.resend-btn:not(:disabled):hover {
+  color: #a5b4fc;
+  text-decoration: underline;
+}
+
+/* ── Back / secondary button ─────────────────────────────── */
+.back-btn {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #888;
+  font-size: 0.9rem;
+  padding: 0.6rem;
+  margin-top: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-family: inherit;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ccc;
+}
+
+/* ── Step progress bar (signup / forgot) ─────────────────── */
+.login-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 1.75rem;
+}
+
+.login-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.35;
+  transition: opacity 0.35s;
+}
+
+.login-step.active { opacity: 1; }
+
+.step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(100, 108, 255, 0.15);
+  border: 2px solid rgba(100, 108, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #a5b4fc;
+  transition: background 0.35s, border-color 0.35s;
+}
+
+.login-step.active .step-dot {
+  background: linear-gradient(135deg, #646cff, #535bf2);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 0 14px rgba(100, 108, 255, 0.5);
+}
+
+.step-label {
+  font-size: 0.72rem;
+  color: #888;
+  white-space: nowrap;
+}
+
+.login-step.active .step-label { color: #a5b4fc; }
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background: rgba(100, 108, 255, 0.25);
+  margin: 0 10px;
+  margin-bottom: 18px;
+  max-width: 80px;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 2rem 1.25rem !important;
+    border-radius: 12px !important;
+  }
+
+  .auth-title {
+    font-size: 1.6rem !important;
+  }
+
+  .otp-boxes {
+    gap: 7px;
+  }
+
+  .otp-box {
+    width: 40px;
+    height: 48px;
+    font-size: 1.3rem;
+  }
+
+  .resend-row {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .otp-box {
+    width: 34px;
+    height: 44px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+  }
+
+  .auth-card {
+    padding: 1.5rem 1rem !important;
+  }
+}

@@ -1,11 +1,14 @@
 import { Link, useParams } from 'react-router-dom';
-import { bgmiTeams } from '../../data/bgmiData';
+import useFetch from '../../hooks/useFetch';
+import BASE_URL from '../../config/api';
 
 const BGMITeamDetails = () => {
   const { teamId } = useParams();
-  const team = bgmiTeams.find(t => t.id === teamId);
+  const { data: team, loading, error } = useFetch(`${BASE_URL}/organizers/${teamId}`);
 
-  if (!team) {
+  if (loading) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Loading...</div>;
+
+  if (error || !team) {
     return (
       <div className="container page-anim" style={{ paddingTop: '8rem', textAlign: 'center' }}>
         <h1>Team Not Found</h1>
@@ -26,8 +29,8 @@ const BGMITeamDetails = () => {
       </div>
 
       <div className="grid-auto">
-        {team.members.map(member => (
-          <div key={member.id} className="glass-panel" style={{ padding: '0', overflow: 'hidden', position: 'relative' }}>
+        {team.members && team.members.map((member, idx) => (
+          <div key={member._id || idx} className="glass-panel" style={{ padding: '0', overflow: 'hidden', position: 'relative' }}>
             <div style={{ height: '80px', background: `linear-gradient(135deg, ${team.color}22, transparent)` }}></div>
             <div style={{ padding: '0 2rem 2rem 2rem', marginTop: '-40px' }}>
               <div style={{

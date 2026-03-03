@@ -1,0 +1,72 @@
+.tournament-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.tournament-info-left {
+  flex: 1 1 300px;
+}
+
+.tournament-info-left h1 {
+  font-size: 3rem;
+  margin: 1rem 0;
+  line-height: 1.1;
+}
+
+.tournament-info-left p {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  max-width: 600px;
+}
+
+.tournament-info-right {
+  background: rgba(255,255,255,0.03);
+  padding: 2rem;
+  border-radius: 12px;
+  flex: 1 1 300px;
+  max-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .tournament-info-left h1 {
+    font-size: 2rem;
+  }
+  
+  .tournament-info-left p {
+    font-size: 1rem;
+  }
+  
+  .tournament-header {
+    flex-direction: column;
+  }
+  
+  .tournament-info-right {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .tournament-title-section {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Guidelines header: side-by-side on desktop, stacked on mobile */
+.guidelines-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .guidelines-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

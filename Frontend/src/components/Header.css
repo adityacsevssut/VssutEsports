@@ -19,11 +19,21 @@
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  font-size: 1.4rem;
+  color: var(--primary);
+  flex-shrink: 0;
 }
 
 .nav-list {
   display: flex;
   gap: 2rem;
+  align-items: center;
 }
 
 .nav-link {
@@ -34,11 +44,18 @@
 
 .nav-link:hover {
   opacity: 1;
+  color: #a855f7; /* Fallback or use var if defined globally */
   color: var(--primary);
+}
+
+/* Account section shown inside nav on desktop, hidden there on mobile */
+.header-account-mobile {
+  display: none; /* hidden on desktop — account is inside nav */
 }
 
 .nav-link.active {
   opacity: 1;
+  color: #ec4899; /* Fallback */
   color: var(--accent);
 }
 
@@ -56,8 +73,6 @@
 .nav-link.active::after {
   width: 100%;
 }
-
-/* ... previous styles ... */
 
 .menu-toggle {
   display: none;
@@ -100,7 +115,29 @@
   display: none;
 }
 
+/* Login Button Styles */
+.login-link {
+  background: var(--primary);
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  color: #fff !important;
+  opacity: 1;
+  transition: transform 0.2s, background 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.login-link:hover {
+  background: var(--accent);
+  transform: translateY(-2px);
+  opacity: 1;
+}
+
+.login-link::after {
+  display: none;
+}
+
 @media (max-width: 768px) {
+  /* ── Header fills full width on mobile ── */
   .header {
     width: 100%;
     top: 0;
@@ -109,46 +146,311 @@
     border-bottom: 1px solid rgba(255,255,255,0.1);
   }
 
-  .menu-toggle {
-    display: block;
-  }
-
-  .close-menu {
-    display: block;
-    position: absolute;
-    top: 1rem;
-    right: 1.5rem;
-    background: none;
-    border: none;
-    font-size: 2.5rem;
-    color: var(--text-main);
-    cursor: pointer;
-    z-index: 1002;
-  }
-
+  /* ── Hide hamburger + side nav on mobile — use bottom nav instead ── */
+  .menu-toggle,
+  .close-menu,
+  .nav-overlay,
   .nav {
-    position: fixed;
-    top: 0;
+    display: none !important;
+  }
+
+  /* ── Show only logo + account toggle in header on mobile ── */
+  .header-content {
+    justify-content: space-between;
+  }
+
+  /* ── Hide nav links on mobile (game links are in bottom nav) ── */
+  .nav {
+    display: none !important;
+  }
+
+  /* ── Show account icon directly in mobile header ── */
+  .header-account-mobile {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  /* Prevent long usernames from wrapping */
+  .header-account-mobile .account-toggle {
+    padding: 0.35rem 0.6rem;
+    max-width: 140px;
+  }
+
+  .header-account-mobile .user-name {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.85rem;
+  }
+
+  /* Make dropdown open downward correctly on mobile */
+  .header-account-mobile .dropdown-menu {
+    position: absolute;
+    top: 110%;
     right: 0;
-    width: 280px;
-    height: 100vh;
+    width: 220px;
     background: #161b22;
-    z-index: 1001;
-    transform: translateX(100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: -5px 0 25px rgba(0,0,0,0.5);
-    padding: 6rem 2rem 2rem;
-    display: block; /* Ensure it's not hidden by default link styles if any conflict */
+    border: 1px solid #30363d;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    z-index: 1100;
   }
 
-  .nav.open {
-    transform: translateX(0);
+  .header-account-mobile .nav-item-dropdown {
+    position: relative;
   }
 
-  .nav-list {
+  .main-content {
+    padding-bottom: 60px;
+  }
+
+  .footer {
+    padding-bottom: 60px;
+    margin-top: 2rem;
+  }
+
+  /* Dropdown on mobile — positioned from right so it doesn't overflow ── */
+  .dropdown-menu {
+    position: absolute;
+    width: 220px;
+    right: 0;
+    background: #161b22;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  }
+
+  .account-toggle {
+    padding: 0.4rem 0.75rem;
+  }
+
+  .login-link {
+    display: inline-flex;
+    width: auto;
+    margin-top: 0;
+  }
+}
+
+/* Account Dropdown Styles */
+.nav-item-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  /* Removed margin-left to align properly with nav gap */
+}
+
+/* ── Avatar button ─────────────────────────────────────── */
+.user-avatar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary, #8b5cf6);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+  border: 2px solid rgba(255,255,255,0.15);
+}
+
+.user-avatar:hover {
+  opacity: 0.85;
+}
+
+.dropdown-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f0f6fc;
+  margin-bottom: 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  width: 220px;
+  background: #161b22;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  z-index: 1010;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 0.5rem;
+}
+
+.dropdown-role {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: var(--accent);
+  letter-spacing: 1px;
+  margin-bottom: 0.2rem;
+}
+
+.dropdown-email {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: var(--text-main);
+  text-decoration: none;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  transition: background 0.2s;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.logout-btn {
+  color: #ff6b6b;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  border-radius: 0 0 8px 8px;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 107, 107, 0.1);
+}
+
+/* ── Dev Mode toggle row ──────────────────────────────────── */
+.dev-mode-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 0.25rem;
+}
+
+.dev-mode-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #a78bfa;
+}
+
+.dev-mode-icon {
+  font-size: 0.95rem;
+}
+
+/* Toggle switch */
+.dev-toggle {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.dev-toggle.off {
+  background: rgba(255,255,255,0.12);
+}
+
+.dev-toggle.on {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+}
+
+.dev-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.3s ease;
+  display: block;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.dev-toggle.on .dev-toggle-thumb {
+  transform: translateX(18px);
+}
+
+/* Developer Dashboard link in dropdown */
+.dev-item {
+  color: #a78bfa !important;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(139, 92, 246, 0.15);
+  margin-top: 2px;
+}
+
+.dev-item:hover {
+  background: rgba(139, 92, 246, 0.12) !important;
+}
+
+
+/* Mobile Adjustments for Dropdown */
+@media (max-width: 768px) {
+  .nav-item-dropdown {
+    width: 100%;
+    margin-left: 0;
+    justify-content: center;
     flex-direction: column;
-    gap: 2rem;
-    font-size: 1.1rem;
-    text-align: center;
+  }
+  
+  .account-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .dropdown-menu {
+    position: static;
+    width: 100%;
+    margin-top: 1rem;
+    box-shadow: none;
+    background: rgba(0,0,0,0.3);
   }
 }
