@@ -384,9 +384,16 @@
 }
 
 .submit-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.8;
   cursor: not-allowed;
   transform: none;
+  background-size: 200% auto;
+  animation: pulse-bg 2s linear infinite;
+}
+
+@keyframes pulse-bg {
+  0% { background-position: 0% center; }
+  100% { background-position: -200% center; }
 }
 
 .cancel-btn {

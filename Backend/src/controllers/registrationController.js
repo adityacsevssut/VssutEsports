@@ -55,7 +55,16 @@ const registerTeam = async (req, res) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
-        }).catch(err => console.error('Failed to sync with Google Sheet:', err.message));
+        })
+        .then(async (response) => {
+          if (!response.ok) {
+            const text = await response.text();
+            console.error('Google Sheet Error Response:', text);
+          } else {
+            console.log('Successfully synced with Google Sheet');
+          }
+        })
+        .catch(err => console.error('Failed to sync with Google Sheet:', err.message));
         
       } catch (err) {
         console.error('Error formatting Google Sheets payload:', err);

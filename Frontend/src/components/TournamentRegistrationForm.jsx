@@ -245,7 +245,7 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
 
       if (res.ok) {
         toast.success('Registration Submitted Successfully!');
-        onClose();
+        onClose(true); // Pass true to indicate successful registration
       } else {
         toast.error(data.message || 'Registration failed');
       }
@@ -496,9 +496,20 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
               type="submit"
               disabled={isSubmitting}
               className="submit-btn"
-              style={{ background: themeColor }}
+              style={{
+                background: isSubmitting
+                  ? `linear-gradient(90deg, ${themeColor} 0%, rgba(255,255,255,0.2) 50%, ${themeColor} 100%)`
+                  : themeColor
+              }}
             >
-              {isSubmitting ? 'Processing...' : (
+              {isSubmitting ? (
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <svg style={{ animation: 'spin-ring 1s linear infinite' }} width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeDasharray="30 30" strokeLinecap="round"></circle>
+                  </svg>
+                  Processing...
+                </span>
+              ) : (
                 tournament?.razorpayLink && numericPrice > 0
                   ? '✅ Confirm Registration'
                   : numericPrice > 0

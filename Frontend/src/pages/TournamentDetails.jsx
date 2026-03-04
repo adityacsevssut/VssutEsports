@@ -78,6 +78,29 @@ const TournamentDetails = () => {
     displayStatus = 'Registration Closed';
   }
 
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  useEffect(() => {
+    // Check if the user is already registered for this tournament
+    const checkRegistrationStatus = async () => {
+      if (user && tournament) {
+        try {
+          const token = user?.token || JSON.parse(localStorage.getItem('user'))?.token;
+          const config = { headers: { Authorization: `Bearer ${token}` } };
+          const { data } = await fetch(`${BASE_URL}/registrations/my`, config).then(res => res.json());
+
+          if (Array.isArray(data)) {
+            const alreadyRegistered = data.some(reg => reg.tournamentId?._id === tournament._id || reg.tournamentId === tournament._id);
+            setIsRegistered(alreadyRegistered);
+          }
+        } catch (err) {
+          console.error("Error checking registration status", err);
+        }
+      }
+    };
+    checkRegistrationStatus();
+  }, [user, tournament]);
+
   // Users can now view details and rules irrespective of login status
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>
@@ -327,15 +350,21 @@ const TournamentDetails = () => {
             {user ? (
               <button
                 className="btn btn-primary"
+                disabled={isRegistered}
                 style={{
                   width: 'auto',
                   padding: '0.6rem 2.5rem',
                   fontSize: '1rem',
-                  backgroundColor: themeColor,
+                  backgroundColor: isRegistered ? 'transparent' : themeColor,
+                  color: isRegistered ? themeColor : 'white',
+                  border: isRegistered ? `2px solid ${themeColor}` : 'none',
+                  opacity: isRegistered ? 1 : 1,
+                  cursor: isRegistered ? 'not-allowed' : 'pointer',
+                  fontWeight: 'bold'
                 }}
-                onClick={() => setShowRegistration(true)}
+                onClick={() => !isRegistered && setShowRegistration(true)}
               >
-                Register Now
+                {isRegistered ? '✅ Registration Done' : 'Register Now'}
               </button>
             ) : (
               <div style={{ textAlign: 'center' }}>
@@ -374,7 +403,10 @@ const TournamentDetails = () => {
           <TournamentRegistrationForm
             tournament={tournament}
             themeColor={themeColor}
-            onClose={() => setShowRegistration(false)}
+            onClose={(success) => {
+              if (success) setIsRegistered(true);
+              setShowRegistration(false)
+            }}
           />
         )
       }
