@@ -237,9 +237,6 @@ const PlayerSignup = () => {
           {step === 1 ? 'Join VSSUT Esports and compete' : `Check your inbox at ${form.email}`}
         </p>
 
-        {error && <div className="error-msg">{error}</div>}
-        {info && <div className="success-msg">{info}</div>}
-
         {/* ── Step 1 ── */}
         {step === 1 && (
           <form onSubmit={handleSendOtp} className="auth-form">
