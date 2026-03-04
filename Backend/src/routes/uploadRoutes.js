@@ -4,17 +4,15 @@ const multer = require('multer');
 const { uploadFile } = require('../controllers/uploadController');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
-// Ensure uploads directory exists
-const uploadDir = 'uploads/';
-if (!fs.existsSync(uploadDir)){
-    fs.mkdirSync(uploadDir);
-}
+// Use OS temp directory which is writable in Serverless environments (like Vercel)
+const uploadDir = os.tmpdir();
 
 // Multer Config
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, uploadDir);
   },
   filename(req, file, cb) {
     cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
