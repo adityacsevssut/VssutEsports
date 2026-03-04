@@ -20,7 +20,7 @@ app.use(async (req, res, next) => {
 
 // Middleware
 const corsOptions = {
-    origin: ['http://localhost:5173', 'https://vssut-esports.vercel.app', 'https://vssut-esports-frontend.vercel.app'], 
+    origin: ['http://localhost:5173', 'https://esports-vssut.vercel.app'], 
     credentials: true,
 };
 app.use(cors(corsOptions));
