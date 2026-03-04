@@ -12,6 +12,9 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
     prize: '',
     format: '',
     playerFormat: '',
+    customIglCount: 1,
+    customPlayerCount: 3,
+    customSubstituteCount: 1,
     pricePerTeam: '',
     razorpayLink: '',
     slots: '',
@@ -386,10 +389,28 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
               <option value="Solo">Solo</option>
               <option value="Duo">Duo</option>
               <option value="Squad">Squad</option>
+              <option value="Custom">Custom</option>
             </select>
             <label className="input-label" style={{ top: '-6px', transform: 'translateY(-100%)', left: '0.2rem', fontSize: '0.85rem', color: themeColor, fontWeight: 600 }}>Player Format</label>
             <span style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#666' }}>▼</span>
           </div>
+
+          {formData.playerFormat === 'Custom' && (
+            <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+              <div className="input-group">
+                <input type="number" min="0" name="customIglCount" className="fancy-input" placeholder=" " value={formData.customIglCount} onChange={handleChange} required />
+                <label className="input-label">Active IGL Count</label>
+              </div>
+              <div className="input-group">
+                <input type="number" min="0" name="customPlayerCount" className="fancy-input" placeholder=" " value={formData.customPlayerCount} onChange={handleChange} required />
+                <label className="input-label">Active Player Count</label>
+              </div>
+              <div className="input-group">
+                <input type="number" min="0" name="customSubstituteCount" className="fancy-input" placeholder=" " value={formData.customSubstituteCount} onChange={handleChange} required />
+                <label className="input-label">Substitute Count</label>
+              </div>
+            </div>
+          )}
           <div className="input-group">
             <input type="text" name="pricePerTeam" className="fancy-input" placeholder=" " value={formData.pricePerTeam} onChange={handleChange} />
             <label className="input-label">Price Per Team</label>

@@ -8,7 +8,14 @@ const registrationSchema = new mongoose.Schema({
   leaderEmail: { type: String },
   players: [{
     name: { type: String },
-    uid: { type: String } // In-game ID
+    inGameName: { type: String },
+    uid: { type: String }, // In-game ID
+    email: { type: String },
+    mobile: { type: String },
+    whatsapp: { type: String },
+    college: { type: String },
+    regdNo: { type: String },
+    role: { type: String }
   }],
   status: { 
     type: String, 

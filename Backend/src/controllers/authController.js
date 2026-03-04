@@ -11,7 +11,7 @@ const PARTNERS = [
   { email: 'freefire@partner.com', password: 'password123', organisingId: 'FF-2024-ORG', role: 'partner_freefire', name: 'FreeFire Partner' },
   { email: 'bgmi@partner.com',     password: 'password123', organisingId: 'BG-2024-ORG', role: 'partner_bgmi',     name: 'BGMI Partner'     },
   { email: 'valorant@partner.com', password: 'password123', organisingId: 'VL-2024-ORG', role: 'partner_valorant', name: 'Valorant Partner' },
-  { email: 'developer@vssut.com',  password: 'password123', organisingId: 'DEV-VSSUT-01',role: 'developer',        name: 'Developer'        },
+  { email: 'devlopervssutesports@gmail.com',  password: 'password123', organisingId: 'DEV-VSSUT-01',role: 'developer',        name: 'Developer'        },
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────

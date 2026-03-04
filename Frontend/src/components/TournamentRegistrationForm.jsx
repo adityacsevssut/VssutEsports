@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import './TournamentRegistrationForm.css';
@@ -6,30 +6,92 @@ import BASE_URL from '../config/api';
 
 const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
   const { user } = useAuth();
-  const [formData, setFormData] = useState({
-    igl: { name: '', college: '', regdNo: '', mobile: '', whatsapp: '' },
-    player2: { name: '', college: '', regdNo: '', mobile: '', whatsapp: '' },
-    player3: { name: '', college: '', regdNo: '', mobile: '', whatsapp: '' },
-    player4: { name: '', college: '', regdNo: '', mobile: '', whatsapp: '' },
-    player5: { name: '', college: '', regdNo: '', mobile: '', whatsapp: '' },
-    substitute: { name: '', college: '', regdNo: '', mobile: '', whatsapp: '' },
-    paymentScreenshot: null
-  });
 
+  const [formData, setFormData] = useState({});
+  const [requiredKeys, setRequiredKeys] = useState([]);
+  const [playerSections, setPlayerSections] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentLinkOpened, setPaymentLinkOpened] = useState(false);
 
-  // Required players: IGL + players 2-5 (substitute is optional)
-  const REQUIRED_PLAYERS = ['igl', 'player2', 'player3', 'player4', 'player5'];
+  useEffect(() => {
+    let iglCount = 1;
+    let playerCount = 3;
+    let subCount = 1;
 
-  /* Validate all required player fields before submission */
+    if (tournament?.playerFormat === 'Solo') {
+      playerCount = 0;
+      subCount = 1;
+    } else if (tournament?.playerFormat === 'Duo') {
+      playerCount = 1;
+      subCount = 1;
+    } else if (tournament?.playerFormat === 'Squad') {
+      playerCount = 3;
+      subCount = 1;
+    } else if (tournament?.playerFormat === 'Custom') {
+      iglCount = tournament.customIglCount ?? 1;
+      playerCount = tournament.customPlayerCount ?? 3;
+      subCount = tournament.customSubstituteCount ?? 1;
+    }
+
+    const initialData = {};
+    const reqKeys = [];
+    const sections = [];
+
+    // IGLs
+    for (let i = 0; i < iglCount; i++) {
+      const key = `igl_${i}`;
+      initialData[key] = {
+        name: '',
+        email: (i === 0 && user) ? user.email : '',
+        inGameName: '',
+        uid: '',
+        college: '',
+        regdNo: '',
+        mobile: '',
+        whatsapp: '',
+        role: 'IGL'
+      };
+      reqKeys.push(key);
+      sections.push({ key, title: i === 0 ? 'IGL (Captain) Details' : `IGL ${i + 1} Details`, isIgl: i === 0 });
+    }
+
+    // Players
+    for (let i = 0; i < playerCount; i++) {
+      const key = `player_${i}`;
+      initialData[key] = { name: '', email: '', inGameName: '', uid: '', college: '', regdNo: '', mobile: '', whatsapp: '', role: 'Player' };
+      reqKeys.push(key);
+      sections.push({ key, title: `Player ${i + 2} Details`, isIgl: false }); // i + 2 assuming 1 IGL
+    }
+
+    // Substitutes
+    for (let i = 0; i < subCount; i++) {
+      const key = `substitute_${i}`;
+      initialData[key] = { name: '', email: '', inGameName: '', uid: '', college: '', regdNo: '', mobile: '', whatsapp: '', role: 'Substitute' };
+      sections.push({ key, title: `Substitute ${subCount > 1 ? i + 1 : ''} Details`, isIgl: false });
+    }
+
+    initialData.paymentScreenshot = null;
+
+    setFormData(initialData);
+    setRequiredKeys(reqKeys);
+    setPlayerSections(sections);
+  }, [tournament, user]);
+
+  if (!formData || Object.keys(formData).length === 0) return null;
+
   const validateForm = () => {
-    for (const key of REQUIRED_PLAYERS) {
+    // Only validating required players (IGLs + Main Players)
+    for (const key of requiredKeys) {
       const p = formData[key];
-      const label = key === 'igl' ? 'IGL (Captain)' : `Player ${key.replace('player', '')}`;
+      const sectionInfo = playerSections.find(s => s.key === key);
+      const label = sectionInfo?.title || 'Player';
+
       if (!p.name.trim()) { toast.error(`${label}: Full Name is required.`); return false; }
+      if (!p.email.trim()) { toast.error(`${label}: Email is required.`); return false; }
+      if (!p.inGameName.trim()) { toast.error(`${label}: In-Game Name is required.`); return false; }
+      if (!p.uid.trim()) { toast.error(`${label}: In-Game UID is required.`); return false; }
       if (!p.college.trim()) { toast.error(`${label}: College Name is required.`); return false; }
-      if (!p.regdNo.trim()) { toast.error(`${label}: Registration Number is required.`); return false; }
+      if (!p.regdNo.trim()) { toast.error(`${label}: College Registration Number is required.`); return false; }
       if (!p.mobile.trim()) { toast.error(`${label}: Mobile Number is required.`); return false; }
       if (!p.whatsapp.trim()) { toast.error(`${label}: WhatsApp Number is required.`); return false; }
     }
@@ -69,12 +131,10 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    // If free tournament
     if (numericPrice === 0) {
       return submitRegistrationData("Free Registration/Manual Proof");
     }
 
-    // If partner has set a direct Razorpay/UPI link — require screenshot proof
     if (tournament?.razorpayLink) {
       if (!formData.paymentScreenshot) {
         toast.error("Please upload your payment screenshot before submitting.");
@@ -100,10 +160,7 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
       const order = await orderRes.json();
 
       if (!order || !order.id) {
-        // If razorpay backend failed (typically missing API keys), we fallback to simulation for dev purposes
         toast.warning(`Razorpay Gateway Error: ${order?.error?.description || 'Missing valid API Keys in Backend'}. Simulation Mode Active.`);
-
-        // Simulating the transaction callback
         setTimeout(() => {
           submitRegistrationData("simulated_pay_" + Math.floor(Math.random() * 9999999));
         }, 1500);
@@ -111,20 +168,19 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
       }
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_pKVqGvSvwUfZZB', // Falls back to test key if env is missing
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_pKVqGvSvwUfZZB',
         amount: order.amount,
         currency: order.currency,
         name: "VSSUT ESPORTS",
         description: `Registration for ${tournament.name}`,
         order_id: order.id,
         handler: async function (response) {
-          // Verify on backend would go here ideally 
           await submitRegistrationData(response.razorpay_payment_id);
         },
         prefill: {
-          name: formData.igl.name,
+          name: formData['igl_0']?.name || '',
           email: user?.email || '',
-          contact: formData.igl.mobile,
+          contact: formData['igl_0']?.mobile || '',
         },
         theme: {
           color: themeColor || "#8b5cf6",
@@ -153,25 +209,27 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
   const submitRegistrationData = async (paymentTransactionId) => {
     setIsSubmitting(true);
 
-    // Construct payload
-    const players = [
-      { ...formData.igl, role: 'IGL' },
-      { ...formData.player2, role: 'Player' },
-      { ...formData.player3, role: 'Player' },
-      { ...formData.player4, role: 'Player' },
-      { ...formData.player5, role: 'Player' },
-      { ...formData.substitute, role: 'Substitute' },
-    ].filter(p => p.name); // Filter out empty entries if any (though required inputs prevent this for main ones)
+    const players = playerSections.map(s => formData[s.key]).filter(p => p.name && p.name.trim());
+
+    const leaderName = formData['igl_0']?.name || 'Unknown';
+    const leaderContact = formData['igl_0']?.mobile || '';
 
     const payload = {
       tournamentId: tournament._id,
-      teamName: `${formData.igl.name}'s Team`, // Simplified for now
-      leaderName: formData.igl.name,
-      leaderContact: formData.igl.mobile,
-      leaderEmail: user ? user.email : '', // Add leader email from logged in user
+      teamName: `${leaderName}'s Team`,
+      leaderName: leaderName,
+      leaderContact: leaderContact,
+      leaderEmail: user ? user.email : '',
       players: players.map(p => ({
         name: p.name,
-        uid: p.regdNo
+        inGameName: p.inGameName,
+        uid: p.uid,
+        regdNo: p.regdNo,
+        email: p.email,
+        mobile: p.mobile,
+        whatsapp: p.whatsapp,
+        college: p.college,
+        role: p.role
       })),
       paymentScreenshot: paymentTransactionId
     };
@@ -199,73 +257,114 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
     }
   };
 
-  const renderPlayerSection = (key, title) => (
-    <div key={key} style={{ marginBottom: '2.5rem' }}>
-      <h3 className="section-title" style={{ color: themeColor }}>{title}</h3>
-      <div className="inputs-grid">
-        <div className="input-group">
-          <input
-            type="text"
-            className="fancy-input"
-            style={{ '--theme-color': themeColor }}
-            placeholder=" "
-            required
-            value={formData[key].name}
-            onChange={(e) => handleChange(key, 'name', e.target.value)}
-          />
-          <label className="input-label">Full Name *</label>
-        </div>
-        <div className="input-group">
-          <input
-            type="text"
-            className="fancy-input"
-            style={{ '--theme-color': themeColor }}
-            placeholder=" "
-            required
-            value={formData[key].college}
-            onChange={(e) => handleChange(key, 'college', e.target.value)}
-          />
-          <label className="input-label">College Name *</label>
-        </div>
-        <div className="input-group">
-          <input
-            type="text"
-            className="fancy-input"
-            style={{ '--theme-color': themeColor }}
-            placeholder=" "
-            required
-            value={formData[key].regdNo}
-            onChange={(e) => handleChange(key, 'regdNo', e.target.value)}
-          />
-          <label className="input-label">Registration Number *</label>
-        </div>
-        <div className="input-group">
-          <input
-            type="tel"
-            className="fancy-input"
-            style={{ '--theme-color': themeColor }}
-            placeholder=" "
-            required
-            value={formData[key].mobile}
-            onChange={(e) => handleChange(key, 'mobile', e.target.value)}
-          />
-          <label className="input-label">Mobile Number *</label>
-        </div>
-        <div className="input-group">
-          <input
-            type="tel"
-            className="fancy-input"
-            style={{ '--theme-color': themeColor }}
-            placeholder=" "
-            required
-            value={formData[key].whatsapp}
-            onChange={(e) => handleChange(key, 'whatsapp', e.target.value)}
-          />
-          <label className="input-label">WhatsApp Number *</label>
+  const renderPlayerSection = (key, title, isIgl) => {
+    const isRequired = requiredKeys.includes(key);
+    return (
+      <div key={key} style={{ marginBottom: '2.5rem' }}>
+        <h3 className="section-title" style={{ color: themeColor }}>{title} {!isRequired && '(Optional)'}</h3>
+        <div className="inputs-grid">
+          <div className="input-group">
+            <input
+              type="text"
+              className="fancy-input"
+              style={{ '--theme-color': themeColor }}
+              placeholder=" "
+              required={isRequired}
+              value={formData[key]?.name || ''}
+              onChange={(e) => handleChange(key, 'name', e.target.value)}
+            />
+            <label className="input-label">Full Name {isRequired ? '*' : ''}</label>
+          </div>
+          <div className="input-group">
+            <input
+              type="email"
+              className="fancy-input"
+              style={{ '--theme-color': themeColor }}
+              placeholder=" "
+              required={isRequired}
+              value={formData[key]?.email || ''}
+              onChange={(e) => handleChange(key, 'email', e.target.value)}
+              disabled={isIgl && user} // IGL email is auto-filled and read-only if logged in
+              title={isIgl && user ? "Automatically filled with your login email" : ""}
+            />
+            <label className="input-label">Email {isRequired ? '*' : ''}</label>
+          </div>
+          <div className="input-group">
+            <input
+              type="text"
+              className="fancy-input"
+              style={{ '--theme-color': themeColor }}
+              placeholder=" "
+              required={isRequired}
+              value={formData[key]?.inGameName || ''}
+              onChange={(e) => handleChange(key, 'inGameName', e.target.value)}
+            />
+            <label className="input-label">In-Game Name {isRequired ? '*' : ''}</label>
+          </div>
+          <div className="input-group">
+            <input
+              type="text"
+              className="fancy-input"
+              style={{ '--theme-color': themeColor }}
+              placeholder=" "
+              required={isRequired}
+              value={formData[key]?.uid || ''}
+              onChange={(e) => handleChange(key, 'uid', e.target.value)}
+            />
+            <label className="input-label">In-Game UID {isRequired ? '*' : ''}</label>
+          </div>
+          <div className="input-group">
+            <input
+              type="text"
+              className="fancy-input"
+              style={{ '--theme-color': themeColor }}
+              placeholder=" "
+              required={isRequired}
+              value={formData[key]?.college || ''}
+              onChange={(e) => handleChange(key, 'college', e.target.value)}
+            />
+            <label className="input-label">College Name {isRequired ? '*' : ''}</label>
+          </div>
+          <div className="input-group">
+            <input
+              type="text"
+              className="fancy-input"
+              style={{ '--theme-color': themeColor }}
+              placeholder=" "
+              required={isRequired}
+              value={formData[key]?.regdNo || ''}
+              onChange={(e) => handleChange(key, 'regdNo', e.target.value)}
+            />
+            <label className="input-label">College Registration No. {isRequired ? '*' : ''}</label>
+          </div>
+          <div className="input-group">
+            <input
+              type="tel"
+              className="fancy-input"
+              style={{ '--theme-color': themeColor }}
+              placeholder=" "
+              required={isRequired}
+              value={formData[key]?.mobile || ''}
+              onChange={(e) => handleChange(key, 'mobile', e.target.value)}
+            />
+            <label className="input-label">Mobile Number {isRequired ? '*' : ''}</label>
+          </div>
+          <div className="input-group">
+            <input
+              type="tel"
+              className="fancy-input"
+              style={{ '--theme-color': themeColor }}
+              placeholder=" "
+              required={isRequired}
+              value={formData[key]?.whatsapp || ''}
+              onChange={(e) => handleChange(key, 'whatsapp', e.target.value)}
+            />
+            <label className="input-label">WhatsApp Number {isRequired ? '*' : ''}</label>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    )
+  };
 
   return (
     <div className="modal-overlay" style={{ '--theme-color': themeColor, '--theme-color-rgb': getComputedColor(themeColor) }}>
@@ -276,12 +375,7 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="registration-form">
-          {renderPlayerSection('igl', 'IGL (Captain) Details')}
-          {renderPlayerSection('player2', 'Player 2 Details')}
-          {renderPlayerSection('player3', 'Player 3 Details')}
-          {renderPlayerSection('player4', 'Player 4 Details')}
-          {renderPlayerSection('player5', 'Player 5 Details')}
-          {renderPlayerSection('substitute', 'Substitute Player Details')}
+          {playerSections.map(s => renderPlayerSection(s.key, s.title, s.isIgl))}
 
           {numericPrice === 0 ? (
             <div className="payment-section">
@@ -300,17 +394,15 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
                   {formData.paymentScreenshot ? '✓' : '⇧'}
                 </div>
                 <span className="upload-text">
-                  {formData.paymentScreenshot ? formData.paymentScreenshot.name : 'Click or drag file to upload here'}
+                  {formData.paymentScreenshot && formData.paymentScreenshot.name ? formData.paymentScreenshot.name : 'Click or drag file to upload here'}
                 </span>
               </div>
             </div>
           ) : tournament?.razorpayLink ? (
-            /* ── Premium Payment Card (Partner UPI Link) ── */
             <div className="payment-section">
               <h3 className="section-title" style={{ color: themeColor }}>💳 Complete Payment</h3>
 
               <div className="payment-card" style={{ '--theme-color': themeColor, '--theme-rgb': getComputedColor(themeColor) }}>
-                {/* Glowing Amount Display */}
                 <div className="payment-amount-ring">
                   <div className="payment-amount-inner">
                     <span className="payment-currency">₹</span>
@@ -320,7 +412,6 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
 
                 <p className="payment-instruction">Scan QR or click the button below to pay directly via UPI</p>
 
-                {/* Payment Method Badges */}
                 <div className="payment-badges">
                   <span className="payment-badge">📱 UPI</span>
                   <span className="payment-badge">💳 Cards</span>
@@ -328,7 +419,6 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
                   <span className="payment-badge">👛 Wallets</span>
                 </div>
 
-                {/* CTA Button */}
                 <a
                   href={tournament.razorpayLink}
                   target="_blank"
@@ -347,7 +437,6 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
                 </p>
               </div>
 
-              {/* Screenshot Upload — reveals after clicking Pay */}
               {paymentLinkOpened && (
                 <div className="payment-proof-zone" style={{ '--theme-color': themeColor }}>
                   <div className="proof-zone-header">
@@ -369,7 +458,7 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
                       {formData.paymentScreenshot ? '✅' : '⇧'}
                     </div>
                     <span className="upload-text">
-                      {formData.paymentScreenshot
+                      {formData.paymentScreenshot && formData.paymentScreenshot.name
                         ? `✓ ${formData.paymentScreenshot.name}`
                         : 'Click or drag your payment screenshot here'}
                     </span>
@@ -378,7 +467,6 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
               )}
             </div>
           ) : (
-            /* ── Razorpay SDK Flow (no partner link set) ── */
             <div className="payment-section">
               <h3 className="section-title" style={{ color: themeColor }}>💳 Entry Fee
               </h3>
@@ -425,8 +513,6 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
   );
 };
 
-// Helper function to extract roughly RGB from hex/rgb strings for the CSS variables glow effect 
-// We are faking it generically if it's a hex
 function getComputedColor(color) {
   if (color === '#ff4655') return '255, 70, 85';
   if (color === '#f97316') return '249, 115, 22';
