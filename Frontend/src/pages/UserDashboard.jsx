@@ -30,6 +30,8 @@ const UserDashboard = () => {
 
     if (user) {
       fetchMyRegistrations();
+    } else {
+      setLoading(false);
     }
   }, [user]);
 

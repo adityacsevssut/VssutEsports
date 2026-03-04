@@ -31,9 +31,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    const name = JSON.parse(localStorage.getItem('user'))?.firstName || 'Player';
-    localStorage.removeItem('user');
-    localStorage.removeItem('devMode');
+    try {
+      localStorage.removeItem('user');
+      localStorage.removeItem('devMode');
+    } catch (e) {
+      console.error('Error clearing localStorage on logout:', e);
+    }
     setUser(null);
     setDevMode(false);
     toast.success('Logged out successfully.');
