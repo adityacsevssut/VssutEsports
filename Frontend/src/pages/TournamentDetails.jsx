@@ -51,6 +51,29 @@ const TournamentDetails = () => {
     return () => clearInterval(timer);
   }, [tournament?.registrationClosesAt]);
 
+  const [isRegistered, setIsRegistered] = useState(false);
+
+  useEffect(() => {
+    // Check if the user is already registered for this tournament
+    const checkRegistrationStatus = async () => {
+      if (user && tournament) {
+        try {
+          const token = user?.token || JSON.parse(localStorage.getItem('user'))?.token;
+          const config = { headers: { Authorization: `Bearer ${token}` } };
+          const { data } = await fetch(`${BASE_URL}/registrations/my`, config).then(res => res.json());
+
+          if (Array.isArray(data)) {
+            const alreadyRegistered = data.some(reg => reg.tournamentId?._id === tournament._id || reg.tournamentId === tournament._id);
+            setIsRegistered(alreadyRegistered);
+          }
+        } catch (err) {
+          console.error("Error checking registration status", err);
+        }
+      }
+    };
+    checkRegistrationStatus();
+  }, [user, tournament]);
+
   if (loading) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Loading...</div>;
   if (error || !tournament) {
     return (
@@ -77,29 +100,6 @@ const TournamentDetails = () => {
   if (displayStatus === 'Registration Open' && isTimeExpired) {
     displayStatus = 'Registration Closed';
   }
-
-  const [isRegistered, setIsRegistered] = useState(false);
-
-  useEffect(() => {
-    // Check if the user is already registered for this tournament
-    const checkRegistrationStatus = async () => {
-      if (user && tournament) {
-        try {
-          const token = user?.token || JSON.parse(localStorage.getItem('user'))?.token;
-          const config = { headers: { Authorization: `Bearer ${token}` } };
-          const { data } = await fetch(`${BASE_URL}/registrations/my`, config).then(res => res.json());
-
-          if (Array.isArray(data)) {
-            const alreadyRegistered = data.some(reg => reg.tournamentId?._id === tournament._id || reg.tournamentId === tournament._id);
-            setIsRegistered(alreadyRegistered);
-          }
-        } catch (err) {
-          console.error("Error checking registration status", err);
-        }
-      }
-    };
-    checkRegistrationStatus();
-  }, [user, tournament]);
 
   // Users can now view details and rules irrespective of login status
   return (
