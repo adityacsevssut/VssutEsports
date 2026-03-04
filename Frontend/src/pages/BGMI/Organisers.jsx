@@ -25,7 +25,7 @@ const BGMIOrganisers = () => {
 
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>
-      <Link to="/bgmi" style={{ marginBottom: '2rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#f97316', fontWeight: '600' }}>
+      <Link to="/bgmi" className="go-back-link" style={{ color: '#f97316' }}>
         <span>&larr;</span> Back to BGMI
       </Link>
       <h1 className="title-gradient" style={{ marginBottom: '3rem', fontSize: 'clamp(2rem, 5vw, 3rem)' }}>BGMI Organising Teams</h1>

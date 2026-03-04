@@ -14,7 +14,8 @@ const Header = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      // Check if the click is outside of any nav-item-dropdown
+      if (!event.target.closest('.header-account-desktop') && !event.target.closest('.header-account-mobile')) {
         setDropdownOpen(false);
       }
     };
@@ -32,62 +33,53 @@ const Header = () => {
     ? (user.firstName || user.username || user.name || 'U')[0].toUpperCase()
     : '';
 
-  /* ── Dropdown menu (reused in both desktop & mobile) ── */
-  const AccountDropdown = ({ ref: r }) => user ? (
-    <div className="nav-item-dropdown" ref={r}>
-      <button className="user-avatar-btn" onClick={toggleDropdown} title={user.email} aria-label="Account menu">
-        <span className="user-avatar">{avatarLetter}</span>
-      </button>
-
-      {dropdownOpen && (
-        <div className="dropdown-menu">
-          <div className="dropdown-header">
-            <p className="dropdown-name">{user.firstName || user.username || user.name}</p>
-            <p className="dropdown-role">{user.role}</p>
-            <p className="dropdown-email">{user.email}</p>
-          </div>
-
-          {isDeveloper && (
-            <div className="dev-mode-row">
-              <span className="dev-mode-label">
-                <span className="dev-mode-icon">⚙️</span>Dev Mode
-              </span>
-              <button
-                className={`dev-toggle ${devMode ? 'on' : 'off'}`}
-                onClick={(e) => { e.stopPropagation(); toggleDevMode(); }}
-                aria-label="Toggle developer mode"
-              >
-                <span className="dev-toggle-thumb" />
-              </button>
-            </div>
-          )}
-
-          <Link
-            to={user.role === 'player' ? '/dashboard' : '/admin'}
-            className="dropdown-item"
-            onClick={closeMenu}
-          >
-            <FaCog />
-            {user.role === 'player' ? 'My Registrations' : 'Dashboard'}
-          </Link>
-
-          {isDeveloper && devMode && (
-            <Link to="/admin" className="dropdown-item dev-item" onClick={closeMenu}>
-              <span>🛠</span> Developer Dashboard
-            </Link>
-          )}
-
-          <button className="dropdown-item logout-btn" onClick={handleLogout}>
-            <FaSignOutAlt /> Logout
-          </button>
+  const renderDropdownContent = () => {
+    if (!user) return null;
+    return (
+      <div className="dropdown-menu">
+        <div className="dropdown-header">
+          <p className="dropdown-name">{user.firstName || user.username || user.name}</p>
+          <p className="dropdown-role">{user.role}</p>
+          <p className="dropdown-email">{user.email}</p>
         </div>
-      )}
-    </div>
-  ) : (
-    <Link to="/login" className={`nav-link login-link ${isActive('/login')}`} onClick={closeMenu}>
-      Login
-    </Link>
-  );
+
+        {isDeveloper && (
+          <div className="dev-mode-row">
+            <span className="dev-mode-label">
+              <span className="dev-mode-icon">⚙️</span>Dev Mode
+            </span>
+            <button
+              className={`dev-toggle ${devMode ? 'on' : 'off'}`}
+              onClick={(e) => { e.stopPropagation(); toggleDevMode(); }}
+              aria-label="Toggle developer mode"
+            >
+              <span className="dev-toggle-thumb" />
+            </button>
+          </div>
+        )}
+
+        <Link
+          to={user.role === 'player' ? '/dashboard' : '/admin'}
+          className="dropdown-item"
+          onClick={closeMenu}
+        >
+          <FaCog />
+          {user.role === 'player' ? 'My Registrations' : 'Dashboard'}
+        </Link>
+
+        {isDeveloper && devMode && (
+          <Link to="/admin" className="dropdown-item dev-item" onClick={closeMenu}>
+            <span>🛠</span> Developer Dashboard
+          </Link>
+        )}
+
+        <button className="dropdown-item logout-btn" onClick={handleLogout}>
+          <FaSignOutAlt /> Logout
+        </button>
+      </div>
+    );
+  };
+
 
   return (
     <header className="header glass-panel">
@@ -107,13 +99,37 @@ const Header = () => {
             <li><Link to="/valorant" className={`nav-link ${isActive('/valorant')}`} onClick={closeMenu}>Valorant</Link></li>
             <li><Link to="/bgmi" className={`nav-link ${isActive('/bgmi')}`} onClick={closeMenu}>BGMI</Link></li>
             {/* Account on desktop */}
-            <li><AccountDropdown ref={dropdownRef} /></li>
+            <li className="header-account-desktop" ref={dropdownRef}>
+              {user ? (
+                <div className="nav-item-dropdown">
+                  <button className="user-avatar-btn" onClick={toggleDropdown} title={user.email} aria-label="Account menu">
+                    <span className="user-avatar">{avatarLetter}</span>
+                  </button>
+                  {dropdownOpen && renderDropdownContent()}
+                </div>
+              ) : (
+                <Link to="/login" className={`nav-link login-link ${isActive('/login')}`} onClick={closeMenu}>
+                  Login
+                </Link>
+              )}
+            </li>
           </ul>
         </nav>
 
         {/* Account always visible in header on mobile */}
         <div className="header-account-mobile" ref={dropdownRef}>
-          <AccountDropdown />
+          {user ? (
+            <div className="nav-item-dropdown">
+              <button className="user-avatar-btn" onClick={toggleDropdown} title={user.email} aria-label="Account menu">
+                <span className="user-avatar">{avatarLetter}</span>
+              </button>
+              {dropdownOpen && renderDropdownContent()}
+            </div>
+          ) : (
+            <Link to="/login" className={`nav-link login-link ${isActive('/login')}`} onClick={closeMenu}>
+              Login
+            </Link>
+          )}
         </div>
 
       </div>

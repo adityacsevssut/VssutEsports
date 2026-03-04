@@ -25,7 +25,7 @@ const ValorantOrganisers = () => {
 
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>
-      <Link to="/valorant" style={{ marginBottom: '2rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#ff4655', fontWeight: '600' }}>
+      <Link to="/valorant" className="go-back-link" style={{ color: '#ff4655' }}>
         <span>&larr;</span> Back to Valorant
       </Link>
       <h1 className="title-gradient" style={{ marginBottom: '3rem', fontSize: 'clamp(2rem, 5vw, 3rem)' }}>Valorant Organising Teams</h1>

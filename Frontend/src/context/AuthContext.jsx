@@ -8,7 +8,7 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 // Only this email unlocks developer features
-const DEVELOPER_EMAIL = 'nahakaditya344@gmail.com';
+const DEVELOPER_EMAIL = 'devlopervssutesports@gmail.com';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

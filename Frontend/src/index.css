@@ -302,3 +302,57 @@ button:hover .arr {
   margin-bottom: 1rem;
   display: inline-block;
 }
+
+/* Uniform Back Link Styles for Desktop & Mobile */
+.go-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+  width: max-content;
+}
+
+.go-back-link span {
+  font-size: 1.3rem;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.go-back-link:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: currentColor;
+  transform: translateX(-5px);
+  text-shadow: 0 0 12px currentColor;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.go-back-link:hover span {
+  transform: translateX(-4px);
+}
+
+.go-back-link:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .go-back-link {
+    font-size: 1rem;
+    padding: 0.4rem 0.8rem;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+  }
+  .go-back-link span {
+    font-size: 1.2rem;
+  }
+}

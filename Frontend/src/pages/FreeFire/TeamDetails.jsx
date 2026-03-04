@@ -19,7 +19,7 @@ const FreeFireTeamDetails = () => {
 
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>
-      <Link to="/freefire/organisers" style={{ marginBottom: '2rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: team.color || 'var(--secondary)', fontWeight: '600' }}>
+      <Link to="/freefire/organisers" className="go-back-link" style={{ color: team.color || 'var(--secondary)' }}>
         <span>&larr;</span> Back to Teams
       </Link>
 

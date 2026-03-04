@@ -81,7 +81,7 @@ const TournamentDetails = () => {
   // Users can now view details and rules irrespective of login status
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>
-      <Link to={`/${tournament.game}/tournaments`} style={{ marginBottom: '2rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: themeColor, fontWeight: '600' }}>
+      <Link to={`/${tournament.game}/tournaments`} className="go-back-link" style={{ color: themeColor }}>
         <span>&larr;</span> Back to Tournaments
       </Link>
 

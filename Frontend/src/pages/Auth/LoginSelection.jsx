@@ -51,7 +51,7 @@ const LoginSelection = () => {
             <p>Manage Valorant tournaments</p>
           </Link>
 
-          {/* Developer — only visible to nahakaditya344@gmail.com */}
+          {/* Developer — only visible to devlopervssutesports@gmail.com */}
           {isDeveloper && (
             <Link
               to="/auth/partner/login?type=developer"

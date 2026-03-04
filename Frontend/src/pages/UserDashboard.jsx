@@ -51,7 +51,7 @@ const UserDashboard = () => {
           <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center' }}>
             <h3>You haven't enrolled in any tournaments yet.</h3>
             <p style={{ color: '#888', marginBottom: '1.5rem' }}>Join a tournament to see your status here.</p>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link to="/freefire" className="btn btn-primary" style={{ width: 'auto' }}>Browse FreeFire</Link>
               <Link to="/bgmi" className="btn btn-primary" style={{ width: 'auto' }}>Browse BGMI</Link>
               <Link to="/valorant" className="btn btn-primary" style={{ width: 'auto' }}>Browse Valorant</Link>

@@ -25,7 +25,7 @@ const FreeFireOrganisers = () => {
 
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>
-      <Link to="/freefire" style={{ marginBottom: '2rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--secondary)', fontWeight: '600' }}>
+      <Link to="/freefire" className="go-back-link" style={{ color: 'var(--secondary)' }}>
         <span>&larr;</span> Back to FreeFire
       </Link>
       <h1 className="title-gradient" style={{ marginBottom: '3rem', fontSize: 'clamp(2rem, 5vw, 3rem)' }}>FreeFire Organising Teams</h1>

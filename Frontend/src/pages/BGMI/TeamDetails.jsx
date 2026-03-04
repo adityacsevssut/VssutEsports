@@ -19,7 +19,7 @@ const BGMITeamDetails = () => {
 
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>
-      <Link to="/bgmi/organisers" style={{ marginBottom: '2rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: team.color, fontWeight: '600' }}>
+      <Link to="/bgmi/organisers" className="go-back-link" style={{ color: team.color }}>
         <span>&larr;</span> Back to Teams
       </Link>
 
