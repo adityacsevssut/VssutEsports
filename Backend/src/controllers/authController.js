@@ -289,21 +289,34 @@ const loginPartner = async (req, res) => {
   }
 
   // 2. Fallback to hardcoded PARTNERS array (FreeFire, BGMI, Valorant base partners + Developer)
-  const fallbackPartner = PARTNERS.find(
-    (p) =>
-      p.email === searchEmail &&
-      p.password === password &&
-      p.organisingId === organisingId.trim()
+  const matchingPartner = PARTNERS.find(
+    (p) => p.email === searchEmail && p.organisingId === organisingId.trim()
   );
 
-  if (fallbackPartner) {
-    return res.json({
-      _id: fallbackPartner.email,
-      name: fallbackPartner.name,
-      email: fallbackPartner.email,
-      role: fallbackPartner.role,
-      token: generateToken(fallbackPartner.email, fallbackPartner.role),
-    });
+  if (matchingPartner) {
+    let isValid = matchingPartner.password === password;
+
+    if (!isValid) {
+      try {
+        const resetPlayer = await Player.findOne({ email: searchEmail });
+        if (resetPlayer && resetPlayer.password) {
+          const match = await bcrypt.compare(password, resetPlayer.password);
+          if (match) isValid = true;
+        }
+      } catch (error) {
+        console.error('Error checking fallback password in Player DB:', error);
+      }
+    }
+
+    if (isValid) {
+      return res.json({
+        _id: matchingPartner.email,
+        name: matchingPartner.name,
+        email: matchingPartner.email,
+        role: matchingPartner.role,
+        token: generateToken(matchingPartner.email, matchingPartner.role),
+      });
+    }
   }
 
   res.status(400).json({ message: 'Invalid credentials or Organising ID.' });
@@ -531,7 +544,24 @@ const loginPlayer = async (req, res) => {
   // Developer Login integration via standard Player Login
   if (searchEmail === 'devlopervssutesports@gmail.com') {
     const dev = PARTNERS.find(p => p.role === 'developer');
+    let isDevValid = false;
+
     if (dev && dev.password === password) {
+      isDevValid = true;
+    } else {
+      // Fallback: Check if developer has reset their password via OTP
+      try {
+        const devPlayer = await Player.findOne({ email: searchEmail });
+        if (devPlayer && devPlayer.password) {
+          const match = await bcrypt.compare(password, devPlayer.password);
+          if (match) isDevValid = true;
+        }
+      } catch (error) {
+        console.error('Error checking developer password in Player collection:', error);
+      }
+    }
+
+    if (isDevValid) {
       return res.json({
         _id: dev.email,
         firstName: dev.name,
