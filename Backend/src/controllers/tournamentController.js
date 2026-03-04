@@ -1,4 +1,5 @@
 const Tournament = require('../models/Tournament');
+const apiCache = require('../utils/cache');
 
 // @desc    Get all tournaments
 // @route   GET /api/tournaments
@@ -6,11 +7,19 @@ const Tournament = require('../models/Tournament');
 const getTournaments = async (req, res) => {
   try {
     const { game } = req.query;
+    const cacheKey = game ? `tournaments_${game}` : 'tournaments_all';
+
+    if (apiCache.has(cacheKey)) {
+      return res.status(200).json(apiCache.get(cacheKey));
+    }
+
     let query = {};
     if (game) {
       query.game = game; // Filter by game if provided
     }
     const tournaments = await Tournament.find(query).sort({ createdAt: -1 });
+
+    apiCache.set(cacheKey, tournaments);
     res.status(200).json(tournaments);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -22,6 +31,11 @@ const getTournaments = async (req, res) => {
 // @access  Public
 const getTournament = async (req, res) => {
   try {
+    const cacheKey = `tournament_${req.params.id}`;
+    if (apiCache.has(cacheKey)) {
+      return res.status(200).json(apiCache.get(cacheKey));
+    }
+
     let tournament;
     if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
         tournament = await Tournament.findById(req.params.id);
@@ -33,6 +47,8 @@ const getTournament = async (req, res) => {
     if (!tournament) {
         return res.status(404).json({ message: 'Tournament not found' });
     }
+
+    apiCache.set(cacheKey, tournament);
     res.status(200).json(tournament);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -46,6 +62,10 @@ const createTournament = async (req, res) => {
   try {
     // Removed Auth Check
     const tournament = await Tournament.create(req.body);
+
+    // Invalidate Cache globally when a new tournament is created
+    apiCache.flushAll();
+
     res.status(201).json(tournament);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -72,6 +92,9 @@ const updateTournament = async (req, res) => {
       new: true,
     });
 
+    // Invalidate cache
+    apiCache.flushAll();
+
     res.status(200).json(updatedTournament);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -96,6 +119,9 @@ const deleteTournament = async (req, res) => {
 
     await Tournament.deleteOne({ _id: tournament._id });
     
+    // Invalidate Cache
+    apiCache.flushAll();
+
     res.status(200).json({ id: req.params.id });
   } catch (error) {
         res.status(500).json({ message: error.message });
