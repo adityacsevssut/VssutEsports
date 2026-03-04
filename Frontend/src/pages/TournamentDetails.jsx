@@ -404,7 +404,7 @@ const TournamentDetails = () => {
             tournament={tournament}
             themeColor={themeColor}
             onClose={(success) => {
-              if (success) setIsRegistered(true);
+              if (success === true) setIsRegistered(true);
               setShowRegistration(false)
             }}
           />

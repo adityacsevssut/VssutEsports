@@ -28,7 +28,9 @@ const registerTeam = async (req, res) => {
         leaderName,
         leaderContact,
         leaderEmail: req.body.leaderEmail, 
-        players
+        players,
+        paymentScreenshot: req.body.paymentScreenshot,
+        utrNumber: req.body.utrNumber
     });
 
     res.status(201).json(registration);
@@ -47,6 +49,7 @@ const registerTeam = async (req, res) => {
           leaderEmail: req.body.leaderEmail || '-',
           leaderUid: igl.uid || '-',
           paymentScreenshot: req.body.paymentScreenshot || '-',
+          utrNumber: req.body.utrNumber || '-',
           players: players || []
         };
         

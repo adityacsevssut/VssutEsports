@@ -11,6 +11,7 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
   const [requiredKeys, setRequiredKeys] = useState([]);
   const [playerSections, setPlayerSections] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [paymentLinkOpened, setPaymentLinkOpened] = useState(false);
 
   useEffect(() => {
@@ -71,6 +72,7 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
     }
 
     initialData.paymentScreenshot = null;
+    initialData.utrNumber = '';
 
     setFormData(initialData);
     setRequiredKeys(reqKeys);
@@ -117,14 +119,8 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
     setFormData(prev => ({ ...prev, paymentScreenshot: e.target.files[0] }));
   };
 
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
+  const handleUtrChange = (e) => {
+    setFormData(prev => ({ ...prev, utrNumber: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
@@ -132,81 +128,59 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
     if (!validateForm()) return;
 
     if (numericPrice === 0) {
-      return submitRegistrationData("Free Registration/Manual Proof");
+      return submitRegistrationData("Free Registration/Manual Proof", "N/A");
     }
 
-    if (tournament?.razorpayLink) {
+    if (numericPrice > 0) {
       if (!formData.paymentScreenshot) {
         toast.error("Please upload your payment screenshot before submitting.");
         return;
       }
-      return submitRegistrationData("direct_upi_payment_proof");
+      if (!formData.utrNumber || formData.utrNumber.trim() === '') {
+        toast.error("Please enter the UTR/Transaction Number.");
+        return;
+      }
+      return uploadScreenshotAndSubmit();
     }
+  };
 
+  const uploadScreenshotAndSubmit = async () => {
     setIsSubmitting(true);
-    const scriptLoaded = await loadRazorpayScript();
-    if (!scriptLoaded) {
-      toast.error("Razorpay SDK failed to load. Are you connected to the internet?");
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
-      const orderRes = await fetch(`${BASE_URL}/payment/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: numericPrice, currency: "INR" }),
-      });
-      const order = await orderRes.json();
+      // Dynamic import to avoid loading supabase if not needed immediately
+      const { supabase, supabaseUrl } = await import('../services/supabaseClient.js');
 
-      if (!order || !order.id) {
-        toast.warning(`Razorpay Gateway Error: ${order?.error?.description || 'Missing valid API Keys in Backend'}. Simulation Mode Active.`);
-        setTimeout(() => {
-          submitRegistrationData("simulated_pay_" + Math.floor(Math.random() * 9999999));
-        }, 1500);
+      if (supabaseUrl === 'https://placeholder.supabase.co') {
+        toast.error("Supabase is not configured!");
+        setIsSubmitting(false);
         return;
       }
 
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_pKVqGvSvwUfZZB',
-        amount: order.amount,
-        currency: order.currency,
-        name: "VSSUT ESPORTS",
-        description: `Registration for ${tournament.name}`,
-        order_id: order.id,
-        handler: async function (response) {
-          await submitRegistrationData(response.razorpay_payment_id);
-        },
-        prefill: {
-          name: formData['igl_0']?.name || '',
-          email: user?.email || '',
-          contact: formData['igl_0']?.mobile || '',
-        },
-        theme: {
-          color: themeColor || "#8b5cf6",
-        },
-        modal: {
-          ondismiss: function () {
-            setIsSubmitting(false);
-          }
-        }
-      };
+      const file = formData.paymentScreenshot;
+      const fileExt = file.name.split('.').pop();
+      const fileName = `payment_${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+      const filePath = `posters/${fileName}`;
 
-      const paymentObject = new window.Razorpay(options);
-      paymentObject.on("payment.failed", function (response) {
-        toast.error("Payment process failed: " + response.error.description);
-        setIsSubmitting(false);
-      });
-      paymentObject.open();
+      const { error } = await supabase.storage
+        .from('tournaments')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('tournaments')
+        .getPublicUrl(filePath);
+
+      submitRegistrationData(publicUrl, formData.utrNumber);
 
     } catch (err) {
-      console.error(err);
-      toast.error("Error initiating payment sequence.");
+      console.error('Error uploading payment screenshot:', err);
+      toast.error('Failed to upload payment screenshot. Please try again.');
       setIsSubmitting(false);
     }
   };
 
-  const submitRegistrationData = async (paymentTransactionId) => {
+  const submitRegistrationData = async (paymentProofUrl, utrNumber) => {
     setIsSubmitting(true);
 
     const players = playerSections.map(s => formData[s.key]).filter(p => p.name && p.name.trim());
@@ -231,7 +205,8 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
         college: p.college,
         role: p.role
       })),
-      paymentScreenshot: paymentTransactionId
+      paymentScreenshot: paymentProofUrl,
+      utrNumber: utrNumber
     };
 
     try {
@@ -244,12 +219,21 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
       const data = await res.json();
 
       if (res.ok) {
+        setIsSubmitting(false);
+        setIsSuccess(true);
         toast.success('Registration Submitted Successfully!');
-        onClose(true); // Pass true to indicate successful registration
+
+        // Wait 1.5 seconds so the user sees the "✅ Registration Done" button state before closing
+        setTimeout(() => {
+          onClose(true);
+        }, 1500);
+
       } else {
+        setIsSubmitting(false);
         toast.error(data.message || 'Registration failed');
       }
     } catch (error) {
+      setIsSubmitting(false);
       toast.error('Network error, please try again.');
       console.error(error);
     } finally {
@@ -371,7 +355,7 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
       <div className="form-container">
         <div className="form-header">
           <h2>Register for {tournament.name}</h2>
-          <button onClick={onClose} className="close-btn">&times;</button>
+          <button onClick={() => onClose(false)} className="close-btn">&times;</button>
         </div>
 
         <form onSubmit={handleSubmit} className="registration-form">
@@ -398,108 +382,107 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
                 </span>
               </div>
             </div>
-          ) : tournament?.razorpayLink ? (
+          ) : (
             <div className="payment-section">
               <h3 className="section-title" style={{ color: themeColor }}>💳 Complete Payment</h3>
 
-              <div className="payment-card" style={{ '--theme-color': themeColor, '--theme-rgb': getComputedColor(themeColor) }}>
-                <div className="payment-amount-ring">
-                  <div className="payment-amount-inner">
-                    <span className="payment-currency">₹</span>
-                    <span className="payment-amount-value">{numericPrice}</span>
-                  </div>
-                </div>
-
-                <p className="payment-instruction">Scan QR or click the button below to pay directly via UPI</p>
-
-                <div className="payment-badges">
-                  <span className="payment-badge">📱 UPI</span>
-                  <span className="payment-badge">💳 Cards</span>
-                  <span className="payment-badge">🏦 Net Banking</span>
-                  <span className="payment-badge">👛 Wallets</span>
-                </div>
-
-                <a
-                  href={tournament.razorpayLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="razorpay-pay-btn"
-                  style={{ '--theme-color': themeColor, '--theme-rgb': getComputedColor(themeColor) }}
-                  onClick={() => setPaymentLinkOpened(true)}
-                >
-                  <span className="pay-btn-icon">⚡</span>
-                  Pay ₹{numericPrice} via Razorpay
-                  <span className="pay-btn-arrow">→</span>
-                </a>
-
-                <p className="payment-security-note">
-                  🔒 Secured by Razorpay · 256-bit SSL Encryption
+              <div className="payment-card" style={{ '--theme-color': themeColor, '--theme-rgb': getComputedColor(themeColor), padding: '2rem' }}>
+                <h4 style={{ textAlign: 'center', margin: '0 0 1rem 0', fontSize: '1.4rem', color: themeColor }}>
+                  Entry Fee: ₹{numericPrice}
+                </h4>
+                <p className="payment-instruction" style={{ marginBottom: '1.5rem', fontWeight: 500 }}>
+                  Scan the QR code below to pay the entry fee
                 </p>
+
+                {tournament?.qrCodeUrl ? (
+                  <div style={{ textAlign: 'center', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
+                    <img
+                      src={tournament.qrCodeUrl}
+                      alt="Payment QR Code"
+                      style={{
+                        maxWidth: '220px',
+                        width: '100%',
+                        objectFit: 'contain',
+                        borderRadius: '16px',
+                        border: `4px solid ${themeColor}`,
+                        padding: '0.8rem',
+                        background: '#fff',
+                        boxShadow: `0 8px 30px -5px ${themeColor}60`
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', margin: '2rem 0', color: '#ff4655', padding: '1rem', background: 'rgba(255, 70, 85, 0.1)', borderRadius: '12px', border: '1px solid #ff4655' }}>
+                    ⚠️ Organizer has not uploaded a payment QR code yet. Please contact them.
+                  </div>
+                )}
+
+                <div className="payment-badges" style={{ marginTop: '1.5rem' }}>
+                  <span className="payment-badge">📱 UPI Only</span>
+                  <span className="payment-badge">🏦 Safe</span>
+                </div>
               </div>
 
-              {paymentLinkOpened && (
-                <div className="payment-proof-zone" style={{ '--theme-color': themeColor }}>
-                  <div className="proof-zone-header">
-                    <span className="proof-zone-icon">📸</span>
-                    <div>
-                      <p className="proof-zone-title">Upload Payment Screenshot</p>
-                      <p className="proof-zone-subtitle">After completing the payment, upload your confirmation screenshot below</p>
-                    </div>
-                  </div>
-                  <div className="file-upload-wrapper" style={{ '--theme-color': themeColor, marginTop: '1rem' }}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="file-input"
-                      required
-                    />
-                    <div className="upload-icon">
-                      {formData.paymentScreenshot ? '✅' : '⇧'}
-                    </div>
-                    <span className="upload-text">
-                      {formData.paymentScreenshot && formData.paymentScreenshot.name
-                        ? `✓ ${formData.paymentScreenshot.name}`
-                        : 'Click or drag your payment screenshot here'}
-                    </span>
+              <div className="payment-proof-zone" style={{ '--theme-color': themeColor, marginTop: '2rem' }}>
+                <div className="proof-zone-header" style={{ marginBottom: '1rem' }}>
+                  <span className="proof-zone-icon">🔢</span>
+                  <div>
+                    <p className="proof-zone-title">Transaction ID / UTR Number</p>
+                    <p className="proof-zone-subtitle">Enter the 12-digit UTR from your UPI app</p>
                   </div>
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="payment-section">
-              <h3 className="section-title" style={{ color: themeColor }}>💳 Entry Fee
-              </h3>
-              <div className="payment-card" style={{ '--theme-color': themeColor, '--theme-rgb': getComputedColor(themeColor) }}>
-                <div className="payment-amount-ring">
-                  <div className="payment-amount-inner">
-                    <span className="payment-currency">₹</span>
-                    <span className="payment-amount-value">{numericPrice}</span>
+                <input
+                  type="text"
+                  value={formData.utrNumber || ''}
+                  onChange={handleUtrChange}
+                  placeholder="e.g. 314059284..."
+                  style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: `1px solid ${themeColor}`, background: 'rgba(255,255,255,0.05)', color: 'white', marginBottom: '1.5rem', fontSize: '1rem' }}
+                  required
+                />
+
+                <div className="proof-zone-header">
+                  <span className="proof-zone-icon">📸</span>
+                  <div>
+                    <p className="proof-zone-title">Upload Payment Screenshot</p>
+                    <p className="proof-zone-subtitle">Upload your confirmation screenshot</p>
                   </div>
                 </div>
-                <p className="payment-instruction">Payment will be processed securely via Razorpay Gateway</p>
-                <div className="payment-badges">
-                  <span className="payment-badge">📱 UPI</span>
-                  <span className="payment-badge">💳 Cards</span>
-                  <span className="payment-badge">👛 Wallets</span>
+                <div className="file-upload-wrapper" style={{ '--theme-color': themeColor, marginTop: '1rem' }}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="file-input"
+                    required
+                  />
+                  <div className="upload-icon">
+                    {formData.paymentScreenshot ? '✅' : '⇧'}
+                  </div>
+                  <span className="upload-text">
+                    {formData.paymentScreenshot && formData.paymentScreenshot.name
+                      ? `✓ ${formData.paymentScreenshot.name}`
+                      : 'Click or drag your payment screenshot here'}
+                  </span>
                 </div>
-                <p className="payment-security-note">🔒 Secured by Razorpay · 256-bit SSL Encryption</p>
               </div>
             </div>
           )}
 
           <div className="form-actions">
-            <button type="button" onClick={onClose} className="cancel-btn">
+            <button type="button" onClick={() => onClose(false)} className="cancel-btn">
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isSuccess}
               className="submit-btn"
               style={{
-                background: isSubmitting
-                  ? `linear-gradient(90deg, ${themeColor} 0%, rgba(255,255,255,0.2) 50%, ${themeColor} 100%)`
-                  : themeColor
+                background: isSuccess
+                  ? '#10b981' // Green for success
+                  : isSubmitting
+                    ? `linear-gradient(90deg, ${themeColor} 0%, rgba(255,255,255,0.2) 50%, ${themeColor} 100%)`
+                    : themeColor,
+                transition: 'all 0.3s ease'
               }}
             >
               {isSubmitting ? (
@@ -509,12 +492,10 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
                   </svg>
                   Processing...
                 </span>
+              ) : isSuccess ? (
+                '✅ Registration Done'
               ) : (
-                tournament?.razorpayLink && numericPrice > 0
-                  ? '✅ Confirm Registration'
-                  : numericPrice > 0
-                    ? `Pay ₹${numericPrice} & Register`
-                    : 'Submit Registration'
+                'Submit Registration'
               )}
             </button>
           </div>

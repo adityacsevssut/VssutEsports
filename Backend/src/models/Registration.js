@@ -22,7 +22,8 @@ const registrationSchema = new mongoose.Schema({
     enum: ['Pending', 'Approved', 'Rejected'], 
     default: 'Pending' 
   },
-  paymentScreenshot: { type: String } // URL if needed
+  paymentScreenshot: { type: String }, // URL if needed
+  utrNumber: { type: String } 
 }, { timestamps: true });
 
 module.exports = mongoose.model('Registration', registrationSchema);

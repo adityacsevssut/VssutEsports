@@ -31,7 +31,7 @@ const tournamentSchema = new mongoose.Schema({
   fixturesUrl: { type: String },
   pointTableUrl: { type: String },
   registrationClosesAt: { type: Date },
-  razorpayLink: { type: String, default: '' },
+  qrCodeUrl: { type: String, default: '' },
   googleSheetUrl: { type: String, default: '' }
 }, { timestamps: true });
 

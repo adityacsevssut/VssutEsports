@@ -16,7 +16,7 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
     customPlayerCount: 3,
     customSubstituteCount: 1,
     pricePerTeam: '',
-    razorpayLink: '',
+    qrCodeUrl: '',
     slots: '',
     status: 'Upcoming',
     description: '',
@@ -45,10 +45,13 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
   const [guidelinesUploadError, setGuidelinesUploadError] = useState('');
   const [fixturesUploadError, setFixturesUploadError] = useState('');
   const [pointTableUploadError, setPointTableUploadError] = useState('');
+  const [qrCodeUploading, setQrCodeUploading] = useState(false);
+  const [qrCodeUploadError, setQrCodeUploadError] = useState('');
   const posterUrlRef = useRef(initialData?.posterUrl || '');
   const guidelinesUrlRef = useRef(initialData?.guidelinesUrl || '');
   const fixturesUrlRef = useRef(initialData?.fixturesUrl || '');
   const pointTableUrlRef = useRef(initialData?.pointTableUrl || '');
+  const qrCodeUrlRef = useRef(initialData?.qrCodeUrl || '');
 
   // theme color setup
   const getThemeColor = (gameName) => {
@@ -87,6 +90,7 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
       guidelinesUrlRef.current = formattedData.guidelinesUrl || '';
       fixturesUrlRef.current = formattedData.fixturesUrl || '';
       pointTableUrlRef.current = formattedData.pointTableUrl || '';
+      qrCodeUrlRef.current = formattedData.qrCodeUrl || '';
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run once on mount — prevents resetting after uploads
@@ -277,7 +281,7 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
 
       // Immediately save to DB if editing an existing tournament
       if (initialData?._id) {
-        await fetch(`' + API + '/tournaments/${initialData._id}`, {
+        await fetch(`${BASE_URL}/tournaments/${initialData._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ pointTableUrl: publicUrl })
@@ -288,6 +292,54 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
       setPointTableUploadError(err.message || 'Error uploading file');
     } finally {
       setPointTableUploading(false);
+    }
+  };
+
+  // ── QR Code Upload ──────────────────────────────────────────────
+  const handleQrCodeUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setQrCodeUploading(true);
+    setQrCodeUploadError('');
+
+    try {
+      const { supabase, supabaseUrl } = await import('../../services/supabaseClient.js');
+
+      if (supabaseUrl === 'https://placeholder.supabase.co') {
+        throw new Error('Supabase is not configured! Please add credentials to your .env file.');
+      }
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `qr_${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+      const filePath = `posters/${fileName}`; // Save in same bucket
+
+      const { error } = await supabase.storage
+        .from('tournaments')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('tournaments')
+        .getPublicUrl(filePath);
+
+      qrCodeUrlRef.current = publicUrl;
+      setFormData(prev => ({ ...prev, qrCodeUrl: publicUrl }));
+
+      // Immediately save to DB if editing an existing tournament
+      if (initialData?._id) {
+        await fetch(`${BASE_URL}/tournaments/${initialData._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ qrCodeUrl: publicUrl })
+        });
+      }
+    } catch (err) {
+      console.error('Error uploading QR Code:', err);
+      setQrCodeUploadError(err.message || 'Error uploading file');
+    } finally {
+      setQrCodeUploading(false);
     }
   };
 
@@ -342,6 +394,7 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
       guidelinesUrl: guidelinesUrlRef.current || formData.guidelinesUrl,
       fixturesUrl: fixturesUrlRef.current || formData.fixturesUrl,
       pointTableUrl: pointTableUrlRef.current || formData.pointTableUrl,
+      qrCodeUrl: qrCodeUrlRef.current || formData.qrCodeUrl,
       googleSheetUrl: formData.googleSheetUrl,
       id: formData.slug || formData.id,
       game
@@ -418,23 +471,30 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
             <label className="input-label">Price Per Team</label>
           </div>
           {formData.pricePerTeam && formData.pricePerTeam.toLowerCase() !== 'free' && (
-            <div className="input-group" style={{ gridColumn: '1 / -1' }}>
-              <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', fontSize: '1.1rem', zIndex: 1 }}>💳</span>
+            <div className="input-group" style={{ gridColumn: '1 / -1', background: 'rgba(0,0,0,0.2)', padding: '1.5rem', borderRadius: '12px', border: `1px solid ${themeColor}40` }}>
+              <label style={{ display: 'block', marginBottom: '1rem', color: themeColor, fontWeight: 600 }}>Payment QR Code (UPI)</label>
+              <div className="file-upload-wrapper" style={{ '--theme-color': themeColor, '--theme-color-rgb': themeRgb, background: 'rgba(255,255,255,0.03)' }}>
                 <input
-                  type="url"
-                  name="razorpayLink"
-                  className="fancy-input"
-                  placeholder=" "
-                  value={formData.razorpayLink || ''}
-                  onChange={handleChange}
-                  style={{ paddingLeft: '2.8rem' }}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleQrCodeUpload}
+                  className="file-input"
+                  disabled={qrCodeUploading}
                 />
-                <label className="input-label" style={{ left: '2.8rem' }}>Razorpay / UPI Payment Link (e.g. https://razorpay.me/@yourname)</label>
+                <div className="upload-icon">
+                  {qrCodeUploading ? '⏳' : (formData.qrCodeUrl ? '✓' : '📷')}
+                </div>
+                <span className="upload-text">
+                  {qrCodeUploading ? 'Uploading QR Code...' : (formData.qrCodeUrl ? 'QR Code Uploaded! Click to replace' : 'Upload QR Code image designed by organizer')}
+                </span>
               </div>
-              <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                Players will be redirected to this link to complete payment. Leave blank to use Razorpay API gateway.
-              </p>
+              {qrCodeUploadError && <div style={{ color: '#ff4655', marginTop: '0.5rem', fontSize: '0.85rem' }}>{qrCodeUploadError}</div>}
+              {formData.qrCodeUrl && (
+                <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <img src={formData.qrCodeUrl} alt="QR Code Output" style={{ maxWidth: '100px', borderRadius: '8px', objectFit: 'contain', background: '#fff', padding: '4px', border: `2px solid ${themeColor}` }} />
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Players registering will be shown this QR Code to scan and pay.</p>
+                </div>
+              )}
             </div>
           )}
 
