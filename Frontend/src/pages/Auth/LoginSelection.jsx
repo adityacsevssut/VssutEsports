@@ -1,12 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaUser, FaGamepad, FaCode } from 'react-icons/fa';
-import { useAuth } from '../../context/AuthContext';
+import { FaUser, FaGamepad } from 'react-icons/fa';
 import './LoginSelection.css';
 
 const LoginSelection = () => {
   const location = useLocation();
-  const { isDeveloper } = useAuth();
 
   return (
     <div className="login-selection-page">
@@ -51,20 +49,7 @@ const LoginSelection = () => {
             <p>Manage Valorant tournaments</p>
           </Link>
 
-          {/* Developer — only visible to devlopervssutesports@gmail.com */}
-          {isDeveloper && (
-            <Link
-              to="/auth/partner/login?type=developer"
-              state={{ from: location.state?.from }}
-              className="login-card dev-card"
-            >
-              <div className="icon-wrapper">
-                <FaCode />
-              </div>
-              <h2>Developer</h2>
-              <p>System maintenance &amp; logs</p>
-            </Link>
-          )}
+          {/* Developer option has been removed from UI - it's handled via player login */}
         </div>
       </div>
     </div>

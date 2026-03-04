@@ -13,7 +13,6 @@ const GAME_LABELS = {
   freefire: { label: 'Free Fire', emoji: '🔥' },
   bgmi: { label: 'BGMI', emoji: '🔫' },
   valorant: { label: 'Valorant', emoji: '🎯' },
-  developer: { label: 'Developer', emoji: '⚙️' },
 };
 
 const PartnerLogin = () => {

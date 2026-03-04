@@ -470,6 +470,21 @@ const googleLogin = async (req, res) => {
 
     const email = decoded.email.toLowerCase();
 
+    // Developer Login integration via standard Google Login
+    if (email === 'devlopervssutesports@gmail.com') {
+      const dev = PARTNERS.find(p => p.role === 'developer');
+      if (dev) {
+        return res.status(200).json({
+          _id: dev.email,
+          firstName: dev.name,
+          lastName: '',
+          email: dev.email,
+          role: dev.role,
+          token: generateToken(dev.email, dev.role),
+        });
+      }
+    }
+
     // Check if player already exists
     let player = await Player.findOne({ email });
 
@@ -507,8 +522,31 @@ const registerPlayer = async (req, res) => res.status(410).json({ message: 'Use 
 // @access  Public
 const loginPlayer = async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Invalid credentials' });
+  }
+
+  const searchEmail = email.trim().toLowerCase();
+
+  // Developer Login integration via standard Player Login
+  if (searchEmail === 'devlopervssutesports@gmail.com') {
+    const dev = PARTNERS.find(p => p.role === 'developer');
+    if (dev && dev.password === password) {
+      return res.json({
+        _id: dev.email,
+        firstName: dev.name,
+        lastName: '',
+        email: dev.email,
+        role: dev.role,
+        token: generateToken(dev.email, dev.role),
+      });
+    } else {
+      return res.status(400).json({ message: 'Invalid credentials for Developer' });
+    }
+  }
+
   try {
-    const player = await Player.findOne({ email });
+    const player = await Player.findOne({ email: searchEmail });
     if (!player || !player.password) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }

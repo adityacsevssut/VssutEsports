@@ -31,7 +31,8 @@ const tournamentSchema = new mongoose.Schema({
   fixturesUrl: { type: String },
   pointTableUrl: { type: String },
   registrationClosesAt: { type: Date },
-  razorpayLink: { type: String, default: '' }
+  razorpayLink: { type: String, default: '' },
+  googleSheetUrl: { type: String, default: '' }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Tournament', tournamentSchema);

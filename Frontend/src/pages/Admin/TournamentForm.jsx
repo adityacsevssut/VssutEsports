@@ -33,7 +33,8 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
     posterUrl: '',
     guidelinesUrl: '',
     fixturesUrl: '',
-    pointTableUrl: ''
+    pointTableUrl: '',
+    googleSheetUrl: ''
   });
   const [uploading, setUploading] = useState(false);
   const [guidelinesUploading, setGuidelinesUploading] = useState(false);
@@ -341,6 +342,7 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
       guidelinesUrl: guidelinesUrlRef.current || formData.guidelinesUrl,
       fixturesUrl: fixturesUrlRef.current || formData.fixturesUrl,
       pointTableUrl: pointTableUrlRef.current || formData.pointTableUrl,
+      googleSheetUrl: formData.googleSheetUrl,
       id: formData.slug || formData.id,
       game
     };
@@ -435,6 +437,26 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
               </p>
             </div>
           )}
+
+          <div className="input-group" style={{ gridColumn: '1 / -1' }}>
+            <div style={{ position: 'relative' }}>
+              <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', fontSize: '1.1rem', zIndex: 1 }}>📊</span>
+              <input
+                type="url"
+                name="googleSheetUrl"
+                className="fancy-input"
+                placeholder=" "
+                value={formData.googleSheetUrl || ''}
+                onChange={handleChange}
+                style={{ paddingLeft: '2.8rem' }}
+              />
+              <label className="input-label" style={{ left: '2.8rem' }}>Google Apps Script Web App URL (Optional)</label>
+            </div>
+            <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+              Automatically append new registrations to your Google Sheet. <a href="https://developers.google.com/apps-script/guides/web" target="_blank" rel="noopener noreferrer" style={{ color: themeColor, textDecoration: 'underline' }}>Learn how to create a Web App URL</a>.
+            </p>
+          </div>
+
           <div className="input-group">
             <select name="status" className="fancy-input" style={{ appearance: 'none' }} value={formData.status} onChange={handleChange}>
               <option>Upcoming</option>

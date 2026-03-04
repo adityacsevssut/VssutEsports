@@ -1,5 +1,6 @@
 const Registration = require('../models/Registration');
 const Tournament = require('../models/Tournament');
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 // Helper to check permissions (Duplicated for now, or move to a shared util)
 const canManage = (user, game) => {
@@ -26,11 +27,41 @@ const registerTeam = async (req, res) => {
         teamName,
         leaderName,
         leaderContact,
-        leaderEmail: req.body.leaderEmail, // Add logic to capturing email
+        leaderEmail: req.body.leaderEmail, 
         players
     });
 
     res.status(201).json(registration);
+
+    // After responding to user, try to sync with Google Sheets asynchronously
+    if (tournament.googleSheetUrl) {
+      try {
+        const igl = (players && players.length > 0) ? players[0] : {};
+        const payload = {
+          tournamentName: tournament.name,
+          game: tournament.game,
+          teamName: teamName || '-',
+          leaderName: leaderName || '-',
+          leaderContact: leaderContact || '-',
+          leaderWhatsapp: igl.whatsapp || '-',
+          leaderEmail: req.body.leaderEmail || '-',
+          leaderUid: igl.uid || '-',
+          paymentScreenshot: req.body.paymentScreenshot || '-',
+          players: players || []
+        };
+        
+        // We do this via fetch asynchronously without await so it doesn't block the API response
+        fetch(tournament.googleSheetUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(err => console.error('Failed to sync with Google Sheet:', err.message));
+        
+      } catch (err) {
+        console.error('Error formatting Google Sheets payload:', err);
+      }
+    }
+
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
