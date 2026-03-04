@@ -6,13 +6,24 @@ const connectDB = require('./src/config/db');
 // Load env vars
 dotenv.config();
 
-// Connect to database
-connectDB();
-
 const app = express();
 
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        console.error("Database connection failed:", error.message);
+        res.status(500).json({ error: "Database connection failed", details: error.message });
+    }
+});
+
 // Middleware
-app.use(cors());
+const corsOptions = {
+    origin: ['http://localhost:5173', 'https://vssut-esports.vercel.app', 'https://vssut-esports-frontend.vercel.app'], 
+    credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
