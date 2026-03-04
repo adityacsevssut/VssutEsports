@@ -163,7 +163,7 @@ const UserDashboard = () => {
                       textTransform: 'uppercase',
                       backdropFilter: 'blur(6px)',
                     }}>
-                      Reg: {reg.status}
+                      {reg.status === 'Pending' ? 'Registration Done' : `Reg: ${reg.status}`}
                     </span>
                   </div>
 

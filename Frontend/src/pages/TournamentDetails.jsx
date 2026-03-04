@@ -18,7 +18,7 @@ const TournamentDetails = () => {
       ? `${BASE_URL}/organizers/${tournament.organisingTeam}`
       : null
   );
-  const { user } = useAuth();
+  const { user, isDeveloper, devMode } = useAuth();
   const location = useLocation();
 
   const [timeLeft, setTimeLeft] = useState('');
@@ -348,24 +348,44 @@ const TournamentDetails = () => {
         {displayStatus === 'Registration Open' ? (
           <>
             {user ? (
-              <button
-                className="btn btn-primary"
-                disabled={isRegistered}
-                style={{
-                  width: 'auto',
-                  padding: '0.6rem 2.5rem',
-                  fontSize: '1rem',
-                  backgroundColor: isRegistered ? 'transparent' : themeColor,
-                  color: isRegistered ? themeColor : 'white',
-                  border: isRegistered ? `2px solid ${themeColor}` : 'none',
-                  opacity: isRegistered ? 1 : 1,
-                  cursor: isRegistered ? 'not-allowed' : 'pointer',
-                  fontWeight: 'bold'
-                }}
-                onClick={() => !isRegistered && setShowRegistration(true)}
-              >
-                {isRegistered ? '✅ Registration Done' : 'Register Now'}
-              </button>
+              (user?.role === 'partner') || (isDeveloper && devMode) ? (
+                <button
+                  className="btn btn-primary"
+                  disabled={true}
+                  style={{
+                    width: 'auto',
+                    padding: '0.6rem 2.5rem',
+                    fontSize: '1rem',
+                    backgroundColor: 'transparent',
+                    color: themeColor,
+                    border: `2px solid ${themeColor}`,
+                    opacity: 0.7,
+                    cursor: 'not-allowed',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  Registration Not Allowed for Organizers
+                </button>
+              ) : (
+                <button
+                  className="btn btn-primary"
+                  disabled={isRegistered}
+                  style={{
+                    width: 'auto',
+                    padding: '0.6rem 2.5rem',
+                    fontSize: '1rem',
+                    backgroundColor: isRegistered ? 'transparent' : themeColor,
+                    color: isRegistered ? themeColor : 'white',
+                    border: isRegistered ? `2px solid ${themeColor}` : 'none',
+                    opacity: isRegistered ? 1 : 1,
+                    cursor: isRegistered ? 'not-allowed' : 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                  onClick={() => !isRegistered && setShowRegistration(true)}
+                >
+                  {isRegistered ? '✅ Registration Done' : 'Register Now'}
+                </button>
+              )
             ) : (
               <div style={{ textAlign: 'center' }}>
                 <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Login to register</p>

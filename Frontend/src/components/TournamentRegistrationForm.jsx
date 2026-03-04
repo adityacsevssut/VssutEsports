@@ -358,6 +358,10 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
           <button onClick={() => onClose(false)} className="close-btn">&times;</button>
         </div>
 
+        <p style={{ textAlign: 'center', color: '#ff4655', marginBottom: '1.5rem', fontWeight: '600', fontSize: '0.95rem' }}>
+          * All fields are required completely except for substitute players.
+        </p>
+
         <form onSubmit={handleSubmit} className="registration-form">
           {playerSections.map(s => renderPlayerSection(s.key, s.title, s.isIgl))}
 
