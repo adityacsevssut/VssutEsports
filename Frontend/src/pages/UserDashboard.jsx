@@ -193,9 +193,9 @@ const UserDashboard = () => {
                       <Link
                         to={`/tournaments/${t.slug || t._id}`}
                         className="btn btn-primary"
-                        style={{ flex: 1, textAlign: 'center', background: theme, border: `1px solid ${theme}`, fontWeight: 700 }}
+                        style={{ flex: 1, textAlign: 'center', background: 'transparent', color: theme, border: `1px solid ${theme}`, fontWeight: 700 }}
                       >
-                        Explore <span className="arr"></span>
+                        ✅ Registration Done
                       </Link>
                     </div>
                   </div>

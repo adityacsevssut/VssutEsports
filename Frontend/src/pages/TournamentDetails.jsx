@@ -60,7 +60,7 @@ const TournamentDetails = () => {
         try {
           const token = user?.token || JSON.parse(localStorage.getItem('user'))?.token;
           const config = { headers: { Authorization: `Bearer ${token}` } };
-          const { data } = await fetch(`${BASE_URL}/registrations/my`, config).then(res => res.json());
+          const data = await fetch(`${BASE_URL}/registrations/my`, config).then(res => res.json());
 
           if (Array.isArray(data)) {
             const alreadyRegistered = data.some(reg => reg.tournamentId?._id === tournament._id || reg.tournamentId === tournament._id);
