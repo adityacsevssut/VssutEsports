@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import './TournamentRegistrationForm.css';
 import BASE_URL from '../config/api';
+import { supabase, supabaseUrl } from '../services/supabaseClient';
 
 const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
   const { user } = useAuth();
@@ -147,9 +148,6 @@ const TournamentRegistrationForm = ({ tournament, onClose, themeColor }) => {
   const uploadScreenshotAndSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Dynamic import to avoid loading supabase if not needed immediately
-      const { supabase, supabaseUrl } = await import('../services/supabaseClient.js');
-
       if (supabaseUrl === 'https://placeholder.supabase.co') {
         toast.error("Supabase is not configured!");
         setIsSubmitting(false);

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import '../../components/TournamentRegistrationForm.css';
 import BASE_URL from '../../config/api';
+import { supabase, supabaseUrl } from '../../services/supabaseClient';
 
 const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
   const [formData, setFormData] = useState(initialData || {
@@ -128,9 +129,6 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
     setUploadError('');
 
     try {
-      // Dynamic import to avoid loading supabase if not needed immediately
-      const { supabase, supabaseUrl } = await import('../../services/supabaseClient.js');
-
       if (supabaseUrl === 'https://placeholder.supabase.co') {
         throw new Error('Supabase is not configured! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your Frontend .env file.');
       }
@@ -178,8 +176,6 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
     setGuidelinesUploadError('');
 
     try {
-      const { supabase, supabaseUrl } = await import('../../services/supabaseClient.js');
-
       if (supabaseUrl === 'https://placeholder.supabase.co') {
         throw new Error('Supabase is not configured! Please add credentials to your .env file.');
       }
@@ -224,7 +220,6 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
     setFixturesUploading(true);
     setFixturesUploadError('');
     try {
-      const { supabase, supabaseUrl } = await import('../../services/supabaseClient.js');
       if (supabaseUrl === 'https://placeholder.supabase.co') {
         throw new Error('Supabase is not configured! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your Frontend .env file.');
       }
@@ -263,7 +258,6 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
     setPointTableUploading(true);
     setPointTableUploadError('');
     try {
-      const { supabase, supabaseUrl } = await import('../../services/supabaseClient.js');
       if (supabaseUrl === 'https://placeholder.supabase.co') {
         throw new Error('Supabase is not configured! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your Frontend .env file.');
       }
@@ -304,8 +298,6 @@ const TournamentForm = ({ game, onSubmit, onCancel, initialData }) => {
     setQrCodeUploadError('');
 
     try {
-      const { supabase, supabaseUrl } = await import('../../services/supabaseClient.js');
-
       if (supabaseUrl === 'https://placeholder.supabase.co') {
         throw new Error('Supabase is not configured! Please add credentials to your .env file.');
       }
