@@ -101,6 +101,40 @@ const TournamentDetails = () => {
     displayStatus = 'Registration Closed';
   }
 
+  if (isRegistered) {
+    return (
+      <div className="container page-anim" style={{ paddingTop: '8rem', minHeight: '70vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <div className="glass-panel" style={{ padding: '4rem 2rem', borderTop: `4px solid ${themeColor}`, maxWidth: '800px', width: '100%', textAlign: 'center' }}>
+          <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🎉</div>
+          <h2 style={{ marginBottom: '1.5rem', fontSize: '2.5rem', lineHeight: '1.4', color: themeColor }}>
+            You Have Successfully Registered For This Tournament
+          </h2>
+          <p style={{ color: 'var(--text-muted)', marginBottom: '3rem', fontSize: '1.2rem' }}>
+            Your registration is confirmed. Track your status and view details from your dashboard.
+          </p>
+          <Link
+            to="/dashboard"
+            className="btn btn-primary"
+            style={{
+              background: themeColor,
+              padding: '1.2rem 3rem',
+              fontSize: '1.2rem',
+              fontWeight: 'bold',
+              textDecoration: 'none',
+              borderRadius: '30px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.8rem',
+              boxShadow: `0 0 20px ${themeColor}66`
+            }}
+          >
+            Go To Dashboard <span>&rarr;</span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   // Users can now view details and rules irrespective of login status
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>

@@ -138,10 +138,12 @@ const getMyRegistrations = async (req, res) => {
         return res.status(400).json({ message: 'User email not found' });
     }
 
+    const userEmailRegex = new RegExp(`^${req.user.email}$`, 'i');
+
     const registrations = await Registration.find({
         $or: [
-            { leaderEmail: req.user.email },
-            { 'players.email': req.user.email }
+            { leaderEmail: userEmailRegex },
+            { 'players.email': userEmailRegex }
         ]
     })
         .populate('tournamentId', 'name game status date slug posterUrl prize format slots')

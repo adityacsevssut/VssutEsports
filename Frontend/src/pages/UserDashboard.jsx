@@ -62,7 +62,7 @@ const UserDashboard = () => {
 
         {registrations.length === 0 ? (
           <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center' }}>
-            <h3>You haven't enrolled in any tournaments yet.</h3>
+            <h3>You haven't enrolled in any tournaments yet. Browse Different Tournaments.</h3>
             <p style={{ color: '#888', marginBottom: '1.5rem' }}>Join a tournament to see your status here.</p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link to="/freefire/tournaments" className="btn btn-primary" style={{ width: 'auto', background: '#ec4899' }}>Browse FreeFire</Link>
@@ -195,7 +195,7 @@ const UserDashboard = () => {
                         className="btn btn-primary"
                         style={{ flex: 1, textAlign: 'center', background: 'transparent', color: theme, border: `1px solid ${theme}`, fontWeight: 700 }}
                       >
-                        ✅ Registration Done
+                        Registration Done
                       </Link>
                     </div>
                   </div>
