@@ -3,6 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './toast.css';
 import Layout from './components/Layout';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import TournamentRegistrations from './pages/Admin/TournamentRegistrations';
@@ -38,6 +39,7 @@ import NotFound from './pages/NotFound';
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       {/* ── Global Toast Notification System ── */}
       <ToastContainer
         position="top-right"
