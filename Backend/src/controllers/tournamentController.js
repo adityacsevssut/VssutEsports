@@ -6,8 +6,10 @@ const apiCache = require('../utils/cache');
 // @access  Public
 const getTournaments = async (req, res) => {
   try {
-    const { game } = req.query;
-    const cacheKey = game ? `tournaments_${game}` : 'tournaments_all';
+    const { game, createdBy } = req.query;
+    let cacheKey = 'tournaments_all';
+    if (game) cacheKey += `_${game}`;
+    if (createdBy) cacheKey += `_${createdBy}`;
 
     if (apiCache.has(cacheKey)) {
       return res.status(200).json(apiCache.get(cacheKey));
@@ -16,6 +18,9 @@ const getTournaments = async (req, res) => {
     let query = {};
     if (game) {
       query.game = game; // Filter by game if provided
+    }
+    if (createdBy) {
+      query.createdBy = createdBy; // Filter by createdBy if provided
     }
     const tournaments = await Tournament.find(query).sort({ createdAt: -1 });
 

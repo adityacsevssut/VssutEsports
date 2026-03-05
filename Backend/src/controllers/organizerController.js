@@ -6,8 +6,10 @@ const apiCache = require('../utils/cache');
 // @access  Public
 const getOrganizers = async (req, res) => {
   try {
-    const { game } = req.query;
-    const cacheKey = game ? `organizers_${game}` : 'organizers_all';
+    const { game, createdBy } = req.query;
+    let cacheKey = 'organizers_all';
+    if (game) cacheKey += `_${game}`;
+    if (createdBy) cacheKey += `_${createdBy}`;
 
     if (apiCache.has(cacheKey)) {
       return res.status(200).json(apiCache.get(cacheKey));
@@ -16,6 +18,9 @@ const getOrganizers = async (req, res) => {
     let query = {};
     if (game) {
       query.game = game;
+    }
+    if (createdBy) {
+      query.createdBy = createdBy;
     }
     const organizers = await Organizer.find(query);
 

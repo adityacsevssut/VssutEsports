@@ -2,6 +2,7 @@ import { Link, useParams, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import useFetch from '../hooks/useFetch';
 import TournamentRegistrationForm from '../components/TournamentRegistrationForm';
+import PageLoader from '../components/PageLoader';
 import { useAuth } from '../context/AuthContext';
 import './TournamentDetails.css'; // Import specific CSS for responsive design
 import BASE_URL from '../config/api';
@@ -52,6 +53,7 @@ const TournamentDetails = () => {
   }, [tournament?.registrationClosesAt]);
 
   const [isRegistered, setIsRegistered] = useState(false);
+  const [isCheckingStatus, setIsCheckingStatus] = useState(true);
 
   useEffect(() => {
     // Check if the user is already registered for this tournament
@@ -68,13 +70,17 @@ const TournamentDetails = () => {
           }
         } catch (err) {
           console.error("Error checking registration status", err);
+        } finally {
+          setIsCheckingStatus(false);
         }
+      } else {
+        setIsCheckingStatus(false);
       }
     };
     checkRegistrationStatus();
   }, [user, tournament]);
 
-  if (loading) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Loading...</div>;
+  if (loading || isCheckingStatus) return <PageLoader />;
   if (error || !tournament) {
     return (
       <div className="container page-anim" style={{ paddingTop: '8rem', textAlign: 'center' }}>

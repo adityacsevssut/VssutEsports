@@ -38,7 +38,7 @@ const AdminDashboard = () => {
       } else if (partnerGame) {
         // Partner trying to fetch tournaments/organizers
         const endpoint = activeTab === 'tournaments' ? 'tournaments' : 'organizers';
-        const res = await fetch(`${BASE_URL}/${endpoint}?game=${partnerGame}`);
+        const res = await fetch(`${BASE_URL}/${endpoint}?game=${partnerGame}&createdBy=${user._id}`);
         const data = await res.json();
         if (activeTab === 'tournaments') {
           setTournaments(data);
@@ -71,7 +71,8 @@ const AdminDashboard = () => {
           ...data.organizer,
           game: data.game,
           name: data.organisingTeam,
-          slug: orgSlug
+          slug: orgSlug,
+          createdBy: user._id
         };
 
         // We attempt to PUT (update) first, if not found or err POST.
@@ -92,7 +93,7 @@ const AdminDashboard = () => {
       }
 
       // Cleanup extra frontend-only fields
-      const submitData = { ...data };
+      const submitData = { ...data, createdBy: user._id };
       delete submitData.includeOrganizer;
       delete submitData.organizer;
 

@@ -32,7 +32,8 @@ const tournamentSchema = new mongoose.Schema({
   pointTableUrl: { type: String },
   registrationClosesAt: { type: Date },
   qrCodeUrl: { type: String, default: '' },
-  googleSheetUrl: { type: String, default: '' }
+  googleSheetUrl: { type: String, default: '' },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Tournament', tournamentSchema);

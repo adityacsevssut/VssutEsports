@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Admin/AdminDashboard.css'; // Reusing admin styles for consistency or create new
 import BASE_URL from '../config/api';
+import PageLoader from '../components/PageLoader';
 
 import freefireImg from '../assets/games/freefire.png';
 import bgmiImg from '../assets/games/bgmi.png';
@@ -49,7 +50,7 @@ const UserDashboard = () => {
   }, [user]);
 
   if (loading) {
-    return <div className="container" style={{ paddingTop: '100px', textAlign: 'center' }}>Loading...</div>;
+    return <PageLoader />;
   }
 
   return (

@@ -19,7 +19,8 @@ const organizerSchema = new mongoose.Schema({
   name: { type: String, required: true }, // e.g., 'Team Nexus'
   description: { type: String },
   color: { type: String }, // Hex code
-  members: [memberSchema]
+  members: [memberSchema],
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Organizer', organizerSchema);
