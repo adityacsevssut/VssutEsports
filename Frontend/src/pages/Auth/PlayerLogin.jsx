@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
-import { GoogleLogin } from '@react-oauth/google';
 import './AuthForm.css';
 import './PlayerLogin.css';
 import BASE_URL from '../../config/api';
@@ -39,27 +38,6 @@ const PlayerLogin = () => {
     }
   };
 
-  /* ── Google Login Handler ── */
-  const handleGoogleSuccess = async (credentialResponse) => {
-    const toastId = toast.loading('Authenticating with Google…');
-    try {
-      setLoading(true);
-      const res = await axios.post(`${API}/google`, {
-        credential: credentialResponse.credential,
-      });
-      toast.update(toastId, { render: `Welcome, ${res.data.firstName || 'Player'}! Signed in with Google.`, type: 'success', isLoading: false, autoClose: 3000 });
-      login(res.data);
-      const from = location.state?.from?.pathname || '/';
-      navigate(from, { replace: true });
-    } catch (err) {
-      toast.update(toastId, { render: err.response?.data?.message || 'Google login failed. Please try again.', type: 'error', isLoading: false, autoClose: 4000 });
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleError = () => {
-    toast.error('Google login was cancelled or interrupted.');
-  };
 
   return (
     <div className="auth-page">
@@ -140,20 +118,6 @@ const PlayerLogin = () => {
               : 'Sign In'}
           </button>
 
-          <div className="auth-divider">
-            <span>OR</span>
-          </div>
-
-          <div className="google-auth-wrapper" style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              useOneTap
-              theme="filled_black"
-              shape="pill"
-              text="signin_with"
-            />
-          </div>
         </form>
 
         <div className="auth-footer">

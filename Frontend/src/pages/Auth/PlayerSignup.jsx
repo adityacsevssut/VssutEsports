@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
-import { GoogleLogin } from '@react-oauth/google';
 import './AuthForm.css';
 import './PlayerLogin.css';
 import './PlayerSignup.css';
@@ -163,26 +162,6 @@ const PlayerSignup = () => {
     }
   };
 
-  /* ── Google Signup Handler ── */
-  const handleGoogleSuccess = async (credentialResponse) => {
-    const toastId = toast.loading('Signing up with Google…');
-    try {
-      setLoading(true);
-      const res = await axios.post(`${API}/google`, {
-        credential: credentialResponse.credential,
-      });
-      toast.update(toastId, { render: `Welcome, ${res.data.firstName}! Account created with Google.`, type: 'success', isLoading: false, autoClose: 3500 });
-      login(res.data);
-      navigate('/');
-    } catch (err) {
-      toast.update(toastId, { render: err.response?.data?.message || 'Google signup failed. Try again.', type: 'error', isLoading: false, autoClose: 4000 });
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleError = () => {
-    toast.error('Google signup was cancelled or interrupted.');
-  };
 
   /* Resend OTP */
   const handleResend = async () => {
@@ -323,20 +302,6 @@ const PlayerSignup = () => {
                 : <>'Send OTP & Continue' <span className="arr" /></>}
             </button>
 
-            <div className="auth-divider">
-              <span>OR</span>
-            </div>
-
-            <div className="google-auth-wrapper" style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                useOneTap
-                theme="filled_black"
-                shape="pill"
-                text="signup_with"
-              />
-            </div>
           </form>
         )}
 

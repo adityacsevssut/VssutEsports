@@ -1,7 +1,7 @@
 .registrations-table {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
-  min-width: 1200px; /* Forces horizontal scroll on smaller screens */
 }
 
 .registrations-table th, .registrations-table td {
@@ -21,13 +21,8 @@
 }
 
 .registrations-table td {
-  vertical-align: top;
+  vertical-align: middle;
   color: #fff;
-}
-
-/* Ensure Team and Leader names don't wrap awkwardly */
-.registrations-table td:nth-child(2),
-.registrations-table td:nth-child(3) {
   white-space: nowrap;
 }
 

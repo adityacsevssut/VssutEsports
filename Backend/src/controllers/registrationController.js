@@ -1,5 +1,6 @@
 const Registration = require('../models/Registration');
 const Tournament = require('../models/Tournament');
+const sendEmail = require('../utils/sendEmail');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 // Helper to check permissions (Duplicated for now, or move to a shared util)
@@ -27,6 +28,19 @@ const registerTeam = async (req, res) => {
     const tournament = await Tournament.findById(tournamentId);
     if (!tournament) {
       return res.status(404).json({ message: 'Tournament not found' });
+    }
+
+    // If a Rejected registration exists for this email+tournament, delete it to allow re-registration
+    const leaderEmail = req.body.leaderEmail;
+    if (leaderEmail) {
+      const existing = await Registration.findOne({
+        tournamentId,
+        leaderEmail: new RegExp(`^${leaderEmail}$`, 'i'),
+        status: 'Rejected'
+      });
+      if (existing) {
+        await existing.deleteOne();
+      }
     }
 
     const registration = await Registration.create({
@@ -112,7 +126,7 @@ const getRegistrations = async (req, res) => {
 // @access  Private (Admin)
 const updateRegistrationStatus = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, rejectionReason } = req.body;
     const registration = await Registration.findById(req.params.id).populate('tournamentId');
 
     if (!registration) {
@@ -125,7 +139,48 @@ const updateRegistrationStatus = async (req, res) => {
     }
 
     registration.status = status;
+    if (status === 'Rejected') {
+      registration.rejectionReason = rejectionReason || 'No reason provided.';
+    } else {
+      registration.rejectionReason = '';
+    }
     await registration.save();
+
+    // Send rejection email to IGL
+    if (status === 'Rejected' && registration.leaderEmail) {
+      try {
+        await sendEmail({
+          email: registration.leaderEmail,
+          subject: `❌ Registration Rejected — ${tournament.name}`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0f0f0f; color: #ffffff; border-radius: 12px; overflow: hidden;">
+              <div style="background: linear-gradient(135deg, #7f0000, #ff4655); padding: 2rem; text-align: center;">
+                <h1 style="margin: 0; font-size: 1.8rem; color: #fff;">❌ Registration Rejected</h1>
+              </div>
+              <div style="padding: 2rem;">
+                <p style="font-size: 1.1rem;">Hi <strong>${registration.leaderName}</strong>,</p>
+                <p>Unfortunately, your registration for <strong style="color: #ff4655;">${tournament.name}</strong> has been <strong>rejected</strong> by the organizer.</p>
+                <div style="background: #1a1a1a; border-left: 4px solid #ff4655; padding: 1rem 1.5rem; border-radius: 8px; margin: 1.5rem 0;">
+                  <p style="margin: 0; color: #aaa; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">Reason for Rejection</p>
+                  <p style="margin: 0.5rem 0 0; font-size: 1rem; color: #fff;">${registration.rejectionReason}</p>
+                </div>
+                <p>You can log back in to <strong>VSSUT Esports</strong> and re-submit your registration after correcting the issue.</p>
+                <div style="text-align: center; margin: 2rem 0;">
+                  <a href="https://vssutesports.com" style="background: #ff4655; color: white; padding: 0.8rem 2rem; border-radius: 8px; text-decoration: none; font-weight: bold;">Go to VSSUT Esports</a>
+                </div>
+                <p style="color: #666; font-size: 0.85rem;">If you have any questions, contact the organizer directly.</p>
+              </div>
+              <div style="background: #0a0a0a; padding: 1rem; text-align: center; color: #555; font-size: 0.8rem;">
+                VSSUT Esports — Official Tournament Platform
+              </div>
+            </div>
+          `
+        });
+      } catch (emailErr) {
+        console.error('Failed to send rejection email:', emailErr.message);
+        // Don't fail the request if email fails
+      }
+    }
 
     res.status(200).json(registration);
   } catch (error) {

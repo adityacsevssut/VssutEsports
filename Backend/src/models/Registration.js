@@ -22,6 +22,7 @@ const registrationSchema = new mongoose.Schema({
     enum: ['Pending', 'Approved', 'Rejected'], 
     default: 'Pending' 
   },
+  rejectionReason: { type: String, default: '' },
   paymentScreenshot: { type: String }, // URL if needed
   utrNumber: { type: String } 
 }, { timestamps: true });

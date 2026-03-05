@@ -53,6 +53,8 @@ const TournamentDetails = () => {
   }, [tournament?.registrationClosesAt]);
 
   const [isRegistered, setIsRegistered] = useState(false);
+  const [regStatus, setRegStatus] = useState(null); // 'Pending' | 'Approved' | 'Rejected'
+  const [regRejectionReason, setRegRejectionReason] = useState('');
   const [isCheckingStatus, setIsCheckingStatus] = useState(true);
 
   useEffect(() => {
@@ -65,8 +67,12 @@ const TournamentDetails = () => {
           const data = await fetch(`${BASE_URL}/registrations/my`, config).then(res => res.json());
 
           if (Array.isArray(data)) {
-            const alreadyRegistered = data.some(reg => reg.tournamentId?._id === tournament._id || reg.tournamentId === tournament._id);
-            setIsRegistered(alreadyRegistered);
+            const myReg = data.find(reg => reg.tournamentId?._id === tournament._id || reg.tournamentId === tournament._id);
+            if (myReg) {
+              setIsRegistered(true);
+              setRegStatus(myReg.status);
+              setRegRejectionReason(myReg.rejectionReason || '');
+            }
           }
         } catch (err) {
           console.error("Error checking registration status", err);
@@ -108,37 +114,81 @@ const TournamentDetails = () => {
   }
 
   if (isRegistered && !location.state?.fromDashboard) {
-    return (
-      <div className="container page-anim" style={{ paddingTop: '8rem', minHeight: '70vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="glass-panel" style={{ padding: '4rem 2rem', borderTop: `4px solid ${themeColor}`, maxWidth: '800px', width: '100%', textAlign: 'center' }}>
-          <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🎉</div>
-          <h2 style={{ marginBottom: '1.5rem', fontSize: '2.5rem', lineHeight: '1.4', color: themeColor }}>
-            You Have Successfully Registered For This Tournament
-          </h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '3rem', fontSize: '1.2rem' }}>
-            Your registration is confirmed. Track your status and view details from your dashboard.
-          </p>
-          <Link
-            to="/dashboard"
-            className="btn btn-primary"
-            style={{
-              background: themeColor,
-              padding: '1.2rem 3rem',
-              fontSize: '1.2rem',
-              fontWeight: 'bold',
-              textDecoration: 'none',
-              borderRadius: '30px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.8rem',
-              boxShadow: `0 0 20px ${themeColor}66`
-            }}
-          >
-            Go To Dashboard <span>&rarr;</span>
-          </Link>
+    // ─── PENDING screen ───────────────────────────────────────────────────
+    if (regStatus === 'Pending') {
+      return (
+        <div className="container page-anim" style={{ paddingTop: '8rem', minHeight: '70vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <div className="glass-panel" style={{ padding: '4rem 2rem', borderTop: `4px solid #facc15`, maxWidth: '800px', width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>⏳</div>
+            <h2 style={{ marginBottom: '1rem', fontSize: '2rem', color: '#facc15' }}>Verification Under Process</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '1.1rem', maxWidth: '500px', margin: '0 auto 2rem' }}>
+              Your registration for <strong style={{ color: '#fff' }}>{tournament.name}</strong> has been submitted and is currently being reviewed by the partner/organizer.
+            </p>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.9rem', marginBottom: '2.5rem' }}>You will receive an email once your registration is approved or rejected.</p>
+            <Link
+              to="/dashboard"
+              className="btn btn-primary"
+              style={{ background: '#facc15', color: '#000', padding: '1rem 2.5rem', fontSize: '1.1rem', fontWeight: 'bold', textDecoration: 'none', borderRadius: '30px', display: 'inline-flex', alignItems: 'center', gap: '0.8rem' }}
+            >
+              Go To Dashboard <span>&rarr;</span>
+            </Link>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+
+    // ─── APPROVED screen ──────────────────────────────────────────────────
+    if (regStatus === 'Approved') {
+      return (
+        <div className="container page-anim" style={{ paddingTop: '8rem', minHeight: '70vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <div className="glass-panel" style={{ padding: '4rem 2rem', borderTop: `4px solid ${themeColor}`, maxWidth: '800px', width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🎉</div>
+            <h2 style={{ marginBottom: '1.5rem', fontSize: '2.5rem', lineHeight: '1.4', color: themeColor }}>
+              You Have Successfully Registered For This Tournament
+            </h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '3rem', fontSize: '1.2rem' }}>
+              Your registration is confirmed. Track your status and view details from your dashboard.
+            </p>
+            <Link
+              to="/dashboard"
+              className="btn btn-primary"
+              style={{ background: themeColor, padding: '1.2rem 3rem', fontSize: '1.2rem', fontWeight: 'bold', textDecoration: 'none', borderRadius: '30px', display: 'inline-flex', alignItems: 'center', gap: '0.8rem', boxShadow: `0 0 20px ${themeColor}66` }}
+            >
+              Go To Dashboard <span>&rarr;</span>
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
+    // ─── REJECTED screen ──────────────────────────────────────────────────
+    if (regStatus === 'Rejected') {
+      return (
+        <div className="container page-anim" style={{ paddingTop: '8rem', minHeight: '70vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <div className="glass-panel" style={{ padding: '4rem 2rem', borderTop: `4px solid #f87171`, maxWidth: '800px', width: '100%', textAlign: 'center' }}>
+            <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>❌</div>
+            <h2 style={{ marginBottom: '1rem', fontSize: '2rem', color: '#f87171' }}>Registration Rejected</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '1.1rem' }}>
+              Your registration for <strong style={{ color: '#fff' }}>{tournament.name}</strong> was rejected by the organizer.
+            </p>
+            {regRejectionReason && (
+              <div style={{ background: 'rgba(248,113,113,0.1)', border: '1px solid #f87171', borderRadius: '10px', padding: '1rem 1.5rem', marginBottom: '2rem', textAlign: 'left', maxWidth: '500px', margin: '0 auto 2rem' }}>
+                <p style={{ color: '#f87171', fontWeight: 700, marginBottom: '0.5rem', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Reason for Rejection</p>
+                <p style={{ color: '#fff', margin: 0 }}>{regRejectionReason}</p>
+              </div>
+            )}
+            <p style={{ color: 'rgba(255,255,255,0.4)', marginBottom: '2.5rem', fontSize: '0.95rem' }}>You can correct the issue and re-register below.</p>
+            <button
+              className="btn btn-primary"
+              onClick={() => { setIsRegistered(false); setRegStatus(null); setShowRegistration(true); }}
+              style={{ background: themeColor, padding: '1rem 2.5rem', fontSize: '1.1rem', fontWeight: 'bold', borderRadius: '30px', cursor: 'pointer', border: 'none' }}
+            >
+              Re-Register Now
+            </button>
+          </div>
+        </div>
+      );
+    }
   }
 
   // Users can now view details and rules irrespective of login status
@@ -414,16 +464,22 @@ const TournamentDetails = () => {
                     width: 'auto',
                     padding: '0.6rem 2.5rem',
                     fontSize: '1rem',
-                    backgroundColor: isRegistered ? 'transparent' : themeColor,
-                    color: isRegistered ? themeColor : 'white',
-                    border: isRegistered ? `2px solid ${themeColor}` : 'none',
-                    opacity: isRegistered ? 1 : 1,
+                    backgroundColor: isRegistered
+                      ? (regStatus === 'Pending' ? 'rgba(250,204,21,0.15)' : 'transparent')
+                      : themeColor,
+                    color: isRegistered
+                      ? (regStatus === 'Pending' ? '#facc15' : themeColor)
+                      : 'white',
+                    border: isRegistered ? `2px solid ${regStatus === 'Pending' ? '#facc15' : themeColor}` : 'none',
                     cursor: isRegistered ? 'not-allowed' : 'pointer',
                     fontWeight: 'bold'
                   }}
                   onClick={() => !isRegistered && setShowRegistration(true)}
                 >
-                  {isRegistered ? '✅ Registration Done' : 'Register Now'}
+                  {isRegistered
+                    ? (regStatus === 'Pending' ? '⏳ Verification Under Process' : '✅ Registration Done')
+                    : 'Register Now'
+                  }
                 </button>
               )
             ) : (

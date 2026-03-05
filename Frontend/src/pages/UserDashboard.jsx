@@ -56,6 +56,8 @@ const UserDashboard = () => {
     return <PageLoader />;
   }
 
+  const approvedRegistrations = registrations.filter(r => r.status === 'Approved');
+
   return (
     <div className="user-dashboard-main page-anim" style={{ paddingTop: '100px' }}>
       <div className="container">
@@ -94,9 +96,27 @@ const UserDashboard = () => {
               <Link to="/valorant/tournaments" className="btn btn-primary" style={{ width: 'auto', background: '#ff4655' }}>Browse Valorant</Link>
             </div>
           </motion.div>
+        ) : approvedRegistrations.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="glass-panel"
+            style={{ padding: '3rem', textAlign: 'center' }}
+          >
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⏳</div>
+            <h3 style={{ color: '#facc15' }}>Registration Under Review</h3>
+            <p style={{ color: '#888', marginBottom: '1.5rem' }}>
+              Your registration is submitted and waiting for partner approval. Your tournament card will appear here once approved.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link to="/freefire/tournaments" className="btn btn-primary" style={{ width: 'auto', background: '#ec4899' }}>Browse FreeFire</Link>
+              <Link to="/bgmi/tournaments" className="btn btn-primary" style={{ width: 'auto', background: '#f97316' }}>Browse BGMI</Link>
+              <Link to="/valorant/tournaments" className="btn btn-primary" style={{ width: 'auto', background: '#ff4655' }}>Browse Valorant</Link>
+            </div>
+          </motion.div>
         ) : (
           <div className="user-dashboard-container">
-            {registrations.map((reg, index) => {
+            {approvedRegistrations.map((reg, index) => {
               const t = reg.tournamentId;
               if (!t) return null;
 
@@ -160,8 +180,8 @@ const UserDashboard = () => {
                       </span>
                     </div>
 
-                    {/* Registration Status */}
-                    <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
+                    {/* Registration Status badge */}
+                    <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.4rem' }}>
                       <span style={{
                         background: reg.status === 'Approved' ? 'rgba(74, 222, 128, 0.2)' :
                           reg.status === 'Rejected' ? 'rgba(248, 113, 113, 0.2)' : 'rgba(250, 204, 21, 0.2)',
@@ -175,8 +195,24 @@ const UserDashboard = () => {
                         textTransform: 'uppercase',
                         backdropFilter: 'blur(6px)',
                       }}>
-                        {reg.status === 'Pending' ? 'Registration Done' : `Reg: ${reg.status}`}
+                        {reg.status === 'Pending' ? '⏳ Verification Pending' :
+                          reg.status === 'Approved' ? '✅ Approved' : '❌ Rejected'}
                       </span>
+                      {reg.status === 'Rejected' && reg.rejectionReason && (
+                        <div style={{
+                          background: 'rgba(248,113,113,0.15)',
+                          border: '1px solid #f87171',
+                          borderRadius: '8px',
+                          padding: '0.4rem 0.7rem',
+                          maxWidth: '180px',
+                          fontSize: '0.65rem',
+                          color: '#fca5a5',
+                          backdropFilter: 'blur(6px)',
+                          lineHeight: 1.4
+                        }}>
+                          <strong>Reason:</strong> {reg.rejectionReason}
+                        </div>
+                      )}
                     </div>
 
                     {/* Content */}
