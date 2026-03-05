@@ -1,6 +1,7 @@
-/* ── Extra top padding for taller signup card ────────────── */
+/* ── Extra bottom padding for taller signup card ─────────── */
 .signup-page {
-  padding-top: 5.5rem;
+  padding-top: 6.5rem;
+  padding-bottom: 4rem;
   align-items: flex-start;
 }
 

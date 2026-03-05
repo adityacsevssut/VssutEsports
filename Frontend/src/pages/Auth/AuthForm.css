@@ -2,9 +2,9 @@
 .auth-page {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   min-height: 100vh;
-  padding: 5.5rem 1rem 4rem;
+  padding: 6.5rem 1rem 3rem;
   width: 100%;
   box-sizing: border-box;
 }
@@ -160,8 +160,7 @@
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 520px) {
   .auth-page {
-    padding: 4.5rem 0.75rem 2rem;
-    align-items: flex-start;
+    padding: 5rem 0.75rem 2.5rem;
   }
 
   .auth-card {
