@@ -101,7 +101,7 @@ const TournamentDetails = () => {
     displayStatus = 'Registration Closed';
   }
 
-  if (isRegistered) {
+  if (isRegistered && !location.state?.fromDashboard) {
     return (
       <div className="container page-anim" style={{ paddingTop: '8rem', minHeight: '70vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <div className="glass-panel" style={{ padding: '4rem 2rem', borderTop: `4px solid ${themeColor}`, maxWidth: '800px', width: '100%', textAlign: 'center' }}>

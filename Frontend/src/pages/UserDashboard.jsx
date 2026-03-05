@@ -192,10 +192,11 @@ const UserDashboard = () => {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <Link
                         to={`/tournaments/${t.slug || t._id}`}
+                        state={{ fromDashboard: true }}
                         className="btn btn-primary"
                         style={{ flex: 1, textAlign: 'center', background: 'transparent', color: theme, border: `1px solid ${theme}`, fontWeight: 700 }}
                       >
-                        Registration Done
+                        Explore
                       </Link>
                     </div>
                   </div>
