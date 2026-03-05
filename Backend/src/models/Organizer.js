@@ -20,7 +20,7 @@ const organizerSchema = new mongoose.Schema({
   description: { type: String },
   color: { type: String }, // Hex code
   members: [memberSchema],
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  createdBy: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Organizer', organizerSchema);

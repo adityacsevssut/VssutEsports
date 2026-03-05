@@ -5,6 +5,7 @@ import './toast.css';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import AdminDashboard from './pages/Admin/AdminDashboard';
+import TournamentRegistrations from './pages/Admin/TournamentRegistrations';
 
 // FreeFire pages
 import FreeFire from './pages/FreeFire/FreeFire';
@@ -56,6 +57,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="admin" element={<AdminDashboard />} />
+          <Route path="admin/tournaments/:tournamentId/registrations" element={<TournamentRegistrations />} />
           <Route path="tournaments/:tournamentId" element={<TournamentDetails />} />
 
           <Route path="dashboard" element={<UserDashboard />} />

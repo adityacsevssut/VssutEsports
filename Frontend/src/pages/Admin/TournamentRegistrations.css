@@ -1,0 +1,46 @@
+.registrations-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px; /* Forces horizontal scroll on smaller screens */
+}
+
+.registrations-table th, .registrations-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.registrations-table th {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.registrations-table td {
+  vertical-align: top;
+  color: #fff;
+}
+
+/* Ensure Team and Leader names don't wrap awkwardly */
+.registrations-table td:nth-child(2),
+.registrations-table td:nth-child(3) {
+  white-space: nowrap;
+}
+
+.registrations-table tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.registrations-table .status-tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

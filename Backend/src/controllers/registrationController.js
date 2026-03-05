@@ -3,11 +3,18 @@ const Tournament = require('../models/Tournament');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 // Helper to check permissions (Duplicated for now, or move to a shared util)
-const canManage = (user, game) => {
+const canManage = (user, game, tournament) => {
     const gameKey = game.toLowerCase();
-    return user.role === 'superadmin' || 
-           user.allowedGames.includes('all') || 
-           user.allowedGames.includes(gameKey);
+    if (user.role === 'superadmin' || user.role === 'developer') return true;
+    if (user.allowedGames && (user.allowedGames.includes('all') || user.allowedGames.includes(gameKey))) return true;
+    
+    if (user.role === `partner_${gameKey}`) {
+        // Allow if user is the creator (or if for some reason createdBy is not set on older docs, allow by default to avoid breaking)
+        if (!tournament || !tournament.createdBy || tournament.createdBy === String(user._id || user.id)) {
+            return true;
+        }
+    }
+    return false;
 };
 
 // @desc    Register a team for a tournament
@@ -89,7 +96,7 @@ const getRegistrations = async (req, res) => {
       return res.status(404).json({ message: 'Tournament not found' });
     }
 
-    if (!canManage(req.user, tournament.game)) {
+    if (!canManage(req.user, tournament.game, tournament)) {
         return res.status(403).json({ message: 'Not authorized to view these registrations' });
     }
 
@@ -113,7 +120,7 @@ const updateRegistrationStatus = async (req, res) => {
     }
 
     const tournament = registration.tournamentId; // Populated
-    if (!canManage(req.user, tournament.game)) {
+    if (!canManage(req.user, tournament.game, tournament)) {
         return res.status(403).json({ message: 'Not authorized to manage this registration' });
     }
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 import './AdminDashboard.css';
 import TournamentForm from './TournamentForm';
 import OrganizerForm from './OrganizerForm';
@@ -314,6 +315,7 @@ const AdminDashboard = () => {
                           </div>
                         </div>
                         <div className="item-actions">
+                          <Link to={`/admin/tournaments/${t._id}/registrations`} className="btn-text" style={{ color: '#22d3ee' }}>Registrations</Link>
                           <button className="btn-text" onClick={() => handleEdit(t)}>Edit</button>
                           <button className="btn-text-danger" onClick={() => handleDelete(t._id)}>Delete</button>
                         </div>
