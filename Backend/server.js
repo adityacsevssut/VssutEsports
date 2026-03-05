@@ -34,6 +34,7 @@ app.use('/api/organizers', require('./src/routes/organizerRoutes')); // Add Orga
 app.use('/api/registrations', require('./src/routes/registrationRoutes'));
 app.use('/api/upload', require('./src/routes/uploadRoutes'));
 app.use('/api/payment', require('./src/routes/paymentRoutes'));
+app.use('/api/contact', require('./src/routes/contactRoutes'));
 
 // Root route
 app.get('/', (req, res) => {

@@ -1,12 +1,16 @@
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTitle } from '../hooks/useTitle';
 import './Home.css';
 import freefireImg from '../assets/games/freefire.png';
 import valorantImg from '../assets/games/valorant.png';
 import bgmiImg from '../assets/games/bgmi.png';
+import TournamentOrganizeForm from '../components/TournamentOrganizeForm';
+import { FaWhatsapp } from 'react-icons/fa';
 
 const Home = () => {
   useTitle('Home');
+  const [isOrganizeModalOpen, setIsOrganizeModalOpen] = useState(false);
 
   return (
     <div className="home page-anim">
@@ -57,8 +61,51 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* ── Organize a Tournament CTA ── */}
+      <section className="organize-cta-section container">
+        <div className="organize-cta-bg" />
+        <div className="organize-cta-inner">
+          <span className="organize-cta-badge">🏆 Host an Event</span>
+          <h2 className="organize-cta-title">
+            Want to <span>Organize</span> a Tournament?
+          </h2>
+          <p className="organize-cta-desc">
+            Got a team and a vision? Reach out to us and we'll help you host an
+            epic esports event at VSSUT. Fill in your details and we'll handle the rest.
+          </p>
+          <button className="organize-cta-btn" onClick={() => setIsOrganizeModalOpen(true)}>
+            <span className="btn-icon">📋</span> Contact Us to Organize
+          </button>
+        </div>
+      </section>
+
+      {/* ── Join Our WhatsApp Community ── */}
+      <section className="community-section container">
+        <div className="community-section-bg" />
+        <div className="community-inner">
+          <span className="community-badge">💬 Community</span>
+          <h2 className="community-title">
+            Join Our <span>Community</span>
+          </h2>
+          <p className="community-desc">
+            Be part of the growing VSSUT Esports family. Get updates on tournaments,
+            match schedules, team announcements and more — all in one place.
+          </p>
+          <a href="#" className="community-wp-link" title="Join WhatsApp Community (link coming soon)">
+            <FaWhatsapp className="community-wp-icon" />
+            Join on WhatsApp
+          </a>
+          <p className="community-note">Link will be updated soon. Stay tuned!</p>
+        </div>
+      </section>
+
+      {isOrganizeModalOpen && (
+        <TournamentOrganizeForm onClose={() => setIsOrganizeModalOpen(false)} />
+      )}
     </div>
   );
 };
 
 export default Home;
+
