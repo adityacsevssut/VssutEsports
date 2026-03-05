@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 import { useAuth } from '../../context/AuthContext';
+import PageLoader from '../../components/PageLoader';
 import BASE_URL from '../../config/api';
 
 const FreeFireOrganisers = () => {
@@ -8,7 +9,7 @@ const FreeFireOrganisers = () => {
   const { user } = useAuth();
   const location = useLocation();
 
-  if (loading) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Loading...</div>;
+  if (loading) return <PageLoader />;
   if (error) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Error loading data</div>;
 
   if (!user) {

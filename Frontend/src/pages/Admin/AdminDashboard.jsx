@@ -5,6 +5,7 @@ import './AdminDashboard.css';
 import TournamentForm from './TournamentForm';
 import OrganizerForm from './OrganizerForm';
 import PartnerForm from './PartnerForm';
+import PageLoader from '../../components/PageLoader';
 import BASE_URL from '../../config/api';
 
 const AdminDashboard = () => {
@@ -190,7 +191,7 @@ const AdminDashboard = () => {
                 <PartnerForm onSubmit={handleSubmitData} onCancel={() => { setShowForm(false); setEditingData(null); }} initialData={editingData} />
               ) : (
                 <div className="data-list">
-                  {loading ? <p>Loading...</p> : (
+                  {loading ? <PageLoader /> : (
                     partners.length === 0 ? <p className="no-data">No partners found.</p> :
                       partners.map(p => (
                         <div key={p._id} className="data-item glass-panel" style={{ borderLeft: `4px solid #8b5cf6` }}>
@@ -221,7 +222,7 @@ const AdminDashboard = () => {
                 <h2>Registered Players</h2>
               </div>
               <div className="glass-panel" style={{ padding: '0', overflow: 'hidden' }}>
-                {loading ? <p style={{ padding: '2rem' }}>Loading users...</p> : (
+                {loading ? <PageLoader /> : (
                   <div className="users-table-wrapper">
                     <table className="users-table">
                       <thead>
@@ -302,7 +303,7 @@ const AdminDashboard = () => {
             )
           ) : (
             <div className="data-list">
-              {loading ? <p>Loading...</p> : (
+              {loading ? <PageLoader /> : (
                 activeTab === 'tournaments' ? (
                   tournaments.length === 0 ? <p className="no-data">No tournaments found.</p> :
                     tournaments.map(t => (

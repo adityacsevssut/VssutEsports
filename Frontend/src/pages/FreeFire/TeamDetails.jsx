@@ -1,12 +1,13 @@
 import { Link, useParams } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
+import PageLoader from '../../components/PageLoader';
 import BASE_URL from '../../config/api';
 
 const FreeFireTeamDetails = () => {
   const { teamId } = useParams();
   const { data: team, loading, error } = useFetch(`${BASE_URL}/organizers/${teamId}`);
 
-  if (loading) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Loading...</div>;
+  if (loading) return <PageLoader />;
 
   if (error || !team) {
     return (

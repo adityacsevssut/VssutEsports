@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
+import PageLoader from '../../components/PageLoader';
 import valorantImg from '../../assets/games/valorant.png';
 import BASE_URL from '../../config/api';
 
@@ -9,7 +10,7 @@ const GLOW = 'rgba(255, 70, 85, 0.45)';
 const ValorantTournaments = () => {
   const { data: valTournaments, loading, error } = useFetch(`${BASE_URL}/tournaments?game=valorant`);
 
-  if (loading) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Loading...</div>;
+  if (loading) return <PageLoader />;
   if (error) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Error loading tournaments</div>;
 
   return (
