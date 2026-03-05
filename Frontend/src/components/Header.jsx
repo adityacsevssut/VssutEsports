@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FaSignOutAlt, FaCog } from 'react-icons/fa';
-import { FaGamepad } from 'react-icons/fa';
 import './Header.css';
 
 const Header = () => {
@@ -86,9 +85,11 @@ const Header = () => {
       <div className="container header-content">
 
         {/* Logo */}
-        <Link to="/" className="logo" onClick={closeMenu}>
-          <FaGamepad className="logo-icon" />
-          <span className="title-gradient">VSSUT</span> ESPORTS
+        <Link to="/" className="logo" onClick={closeMenu} style={{ textDecoration: 'none', color: '#fff' }}>
+          <span className="logo-icon" style={{ fontSize: '1.6rem', lineHeight: '1' }}>🎮</span>
+          <span style={{ display: 'inline-flex', gap: '0.35rem', alignItems: 'center' }}>
+            <span className="title-gradient">VSSUT</span> ESPORTS
+          </span>
         </Link>
 
         {/* Desktop nav — hidden on mobile */}
