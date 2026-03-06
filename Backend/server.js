@@ -41,6 +41,12 @@ app.get('/', (req, res) => {
     res.send('VSSUT Esports API is running');
 });
 
+// Keep-alive route for UptimeRobot
+app.get('/api/keep-alive', (req, res) => {
+    // connectDB is already called in the global middleware, so the DB connection is kept alive
+    res.status(200).json({ status: 'awake', message: 'Backend and Database are active!' });
+});
+
 const PORT = process.env.PORT || 5000;
 
 if (process.env.NODE_ENV !== 'production') {
