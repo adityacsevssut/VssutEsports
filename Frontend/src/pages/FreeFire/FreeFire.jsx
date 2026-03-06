@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTitle } from '../../hooks/useTitle';
 
-import freefireImg from '../../assets/games/freefire.png';
+import freefireImg from '../../assets/games/freefire.jpg';
 
 const FreeFire = () => {
   useTitle('FreeFire');

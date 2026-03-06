@@ -29,7 +29,7 @@ const PlayerLogin = () => {
       const res = await axios.post(`${API}/player/login`, { email, password });
       toast.update(toastId, { render: `Welcome back, ${res.data.firstName || 'Player'}!`, type: 'success', isLoading: false, autoClose: 3000 });
       login(res.data);
-      const from = location.state?.from?.pathname || '/';
+      const from = location.state?.from || '/';
       navigate(from, { replace: true });
     } catch (err) {
       toast.update(toastId, { render: err.response?.data?.message || 'Login failed. Please check your credentials.', type: 'error', isLoading: false, autoClose: 4000 });
@@ -122,7 +122,7 @@ const PlayerLogin = () => {
 
         <div className="auth-footer">
           Don't have an account?
-          <Link to="/auth/player/register" className="auth-link">Sign Up</Link>
+          <Link to="/auth/player/register" state={{ from: location.state?.from }} className="auth-link">Sign Up</Link>
         </div>
       </div>
     </div>

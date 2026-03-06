@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTitle } from '../hooks/useTitle';
 import './Home.css';
-import freefireImg from '../assets/games/freefire.png';
-import valorantImg from '../assets/games/valorant.png';
-import bgmiImg from '../assets/games/bgmi.png';
+import freefireImg from '../assets/games/freefire.jpg';
+import valorantImg from '../assets/games/valorant.jpg';
+import bgmiImg from '../assets/games/bgmi.jpg';
 import TournamentOrganizeForm from '../components/TournamentOrganizeForm';
 import { FaWhatsapp } from 'react-icons/fa';
 

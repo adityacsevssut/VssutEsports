@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTitle } from '../../hooks/useTitle';
 
-import valorantImg from '../../assets/games/valorant.png';
+import valorantImg from '../../assets/games/valorant.jpg';
 
 const Valorant = () => {
   useTitle('Valorant');

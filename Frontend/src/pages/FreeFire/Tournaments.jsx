@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import useFetch from '../../hooks/useFetch';
 import PageLoader from '../../components/PageLoader';
-import freefireImg from '../../assets/games/freefire.png';
+import freefireImg from '../../assets/games/freefire.jpg';
 import BASE_URL from '../../config/api';
+import { toast } from 'react-toastify';
 
 const THEME = '#ec4899';
 const GLOW = 'rgba(236, 72, 153, 0.45)';
@@ -12,6 +13,26 @@ const FreeFireTournaments = () => {
 
   if (loading) return <PageLoader />;
   if (error) return <div className="container" style={{ paddingTop: '8rem', textAlign: 'center' }}>Error loading data</div>;
+
+  const handleShare = async (e, tournament) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${window.location.origin}/tournaments/${tournament.slug || tournament._id}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: tournament.name,
+          text: `Check out this FreeFire tournament: ${tournament.name}!`,
+          url: url,
+        });
+      } catch (err) {
+        console.error('Error sharing', err);
+      }
+    } else {
+      navigator.clipboard.writeText(url);
+      toast.success('Link copied to clipboard!');
+    }
+  };
 
   return (
     <div className="container page-anim" style={{ paddingTop: '8rem' }}>
@@ -125,14 +146,50 @@ const FreeFireTournaments = () => {
                           )}
                         </div>
 
-                        <Link
-                          to={`/tournaments/${t.slug || t._id}`}
-                          className="link-arrow"
-                          style={{ '--card-accent': `linear-gradient(135deg, ${THEME}, #f97316)`, '--card-glow': GLOW }}
-                        >
-                          Explore
-                        </Link>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                          <Link
+                            to={`/tournaments/${t.slug || t._id}`}
+                            className="link-arrow"
+                            style={{ '--card-accent': `linear-gradient(135deg, ${THEME}, #f97316)`, '--card-glow': GLOW, flex: 1 }}
+                          >
+                            Explore
+                          </Link>
+                          <button
+                            onClick={(e) => handleShare(e, t)}
+                            style={{
+                              background: 'transparent',
+                              border: `1px solid rgba(255,255,255,0.2)`,
+                              color: 'white',
+                              borderRadius: '8px',
+                              padding: '0.6rem',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.3s ease',
+                              marginTop: 'auto'
+                            }}
+                            onMouseEnter={e => {
+                              e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)';
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.background = 'transparent';
+                              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                            }}
+                            title="Share Tournament"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="18" cy="5" r="3"></circle>
+                              <circle cx="6" cy="12" r="3"></circle>
+                              <circle cx="18" cy="19" r="3"></circle>
+                              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                          </button>
+                        </div>
                       </div>
+
                     </div>
                   ))}
                 </div>

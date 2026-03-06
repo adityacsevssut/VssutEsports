@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../context/AuthContext';
@@ -84,6 +84,7 @@ const PlayerSignup = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   // Countdown
@@ -155,7 +156,8 @@ const PlayerSignup = () => {
       });
       toast.update(toastId, { render: `Account created! Welcome to VSSUT Esports, ${res.data.firstName}!`, type: 'success', isLoading: false, autoClose: 3500 });
       login(res.data);
-      navigate('/');
+      const from = location.state?.from || '/';
+      navigate(from, { replace: true });
     } catch (err) {
       toast.update(toastId, { render: err.response?.data?.message || 'Verification failed. Check your OTP.', type: 'error', isLoading: false, autoClose: 4000 });
       setLoading(false);
@@ -337,7 +339,7 @@ const PlayerSignup = () => {
 
         <div className="auth-footer">
           Already have an account?
-          <Link to="/auth/player/login" className="auth-link">Log In</Link>
+          <Link to="/auth/player/login" state={{ from: location.state?.from }} className="auth-link">Log In</Link>
         </div>
       </div>
     </div>

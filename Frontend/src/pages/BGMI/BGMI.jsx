@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTitle } from '../../hooks/useTitle';
 
-import bgmiImg from '../../assets/games/bgmi.png';
+import bgmiImg from '../../assets/games/bgmi.jpg';
 
 const BGMI = () => {
   useTitle('BGMI');

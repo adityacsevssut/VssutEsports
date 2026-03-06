@@ -6,6 +6,7 @@ import PageLoader from '../components/PageLoader';
 import { useAuth } from '../context/AuthContext';
 import './TournamentDetails.css'; // Import specific CSS for responsive design
 import BASE_URL from '../config/api';
+import { toast } from 'react-toastify';
 
 const TournamentDetails = () => {
   const { tournamentId } = useParams();
@@ -112,6 +113,24 @@ const TournamentDetails = () => {
   if (displayStatus === 'Registration Open' && isTimeExpired) {
     displayStatus = 'Registration Closed';
   }
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: tournament.name,
+          text: `Check out this ${tournament.game} tournament: ${tournament.name}!`,
+          url: url,
+        });
+      } catch (err) {
+        console.error('Error sharing', err);
+      }
+    } else {
+      navigator.clipboard.writeText(url);
+      toast.success('Link copied to clipboard!');
+    }
+  };
 
   if (isRegistered && !location.state?.fromDashboard) {
     // ─── PENDING screen ───────────────────────────────────────────────────
@@ -239,6 +258,42 @@ const TournamentDetails = () => {
                 }}
               >
                 View Organizers
+              </button>
+              <button
+                onClick={handleShare}
+                style={{
+                  background: 'transparent',
+                  color: 'white',
+                  border: `1px solid rgba(255,255,255,0.2)`,
+                  padding: '0.25rem 0.75rem',
+                  borderRadius: '20px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                Share
               </button>
               {tournament.registrationClosesAt && displayStatus === 'Registration Open' && timeLeft && timeLeft !== 'Closed' && (
                 <span style={{
@@ -483,12 +538,9 @@ const TournamentDetails = () => {
                 </button>
               )
             ) : (
-              <div style={{ textAlign: 'center' }}>
-                <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Login to register</p>
-                <Link to="/login" state={{ from: location }} className="btn btn-primary" style={{ display: 'inline-block', width: 'auto', padding: '0.6rem 2.5rem', background: themeColor }}>
-                  Login to Register
-                </Link>
-              </div>
+              <Link to="/login" state={{ from: location }} className="btn btn-primary" style={{ display: 'inline-block', width: 'auto', padding: '0.6rem 2.5rem', background: themeColor, fontWeight: 'bold' }}>
+                Register Now
+              </Link>
             )}
             {tournament.registrationClosesAt && (
               <p style={{ marginTop: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>

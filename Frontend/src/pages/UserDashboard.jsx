@@ -9,9 +9,9 @@ import PageLoader from '../components/PageLoader';
 import { motion } from 'framer-motion';
 import { FaUsers, FaCrown, FaUser, FaGamepad, FaInfoCircle, FaTrophy, FaCalendarAlt } from 'react-icons/fa';
 
-import freefireImg from '../assets/games/freefire.png';
-import bgmiImg from '../assets/games/bgmi.png';
-import valorantImg from '../assets/games/valorant.png';
+import freefireImg from '../assets/games/freefire.jpg';
+import bgmiImg from '../assets/games/bgmi.jpg';
+import valorantImg from '../assets/games/valorant.jpg';
 
 const getThemeProps = (game) => {
   switch (game?.toLowerCase()) {
