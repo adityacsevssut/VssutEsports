@@ -61,29 +61,40 @@ const TournamentDetails = () => {
   useEffect(() => {
     // Check if the user is already registered for this tournament
     const checkRegistrationStatus = async () => {
-      if (user && tournament) {
-        try {
-          const token = user?.token || JSON.parse(localStorage.getItem('user'))?.token;
-          const config = { headers: { Authorization: `Bearer ${token}` } };
-          const data = await fetch(`${BASE_URL}/registrations/my`, config).then(res => res.json());
+      // If we already know the user is not logged in, stop checking immediately
+      if (!user) {
+        setIsCheckingStatus(false);
+        return;
+      }
 
-          if (Array.isArray(data)) {
-            const myReg = data.find(reg => reg.tournamentId?._id === tournament._id || reg.tournamentId === tournament._id);
-            if (myReg) {
-              setIsRegistered(true);
-              setRegStatus(myReg.status);
-              setRegRejectionReason(myReg.rejectionReason || '');
-            }
-          }
-        } catch (err) {
-          console.error("Error checking registration status", err);
-        } finally {
+      // If tournament info is missing, wait for it
+      if (!tournament) return;
+
+      try {
+        const token = user?.token || JSON.parse(localStorage.getItem('user'))?.token;
+        if (!token) {
           setIsCheckingStatus(false);
+          return;
         }
-      } else {
+
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        const data = await fetch(`${BASE_URL}/registrations/my`, config).then(res => res.json());
+
+        if (Array.isArray(data)) {
+          const myReg = data.find(reg => reg.tournamentId?._id === tournament._id || reg.tournamentId === tournament._id);
+          if (myReg) {
+            setIsRegistered(true);
+            setRegStatus(myReg.status);
+            setRegRejectionReason(myReg.rejectionReason || '');
+          }
+        }
+      } catch (err) {
+        console.error("Error checking registration status", err);
+      } finally {
         setIsCheckingStatus(false);
       }
     };
+
     checkRegistrationStatus();
   }, [user, tournament]);
 
